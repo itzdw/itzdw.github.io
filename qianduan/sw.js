@@ -2,7 +2,7 @@
  * 策略：HTML 导航 network-first（保证发版可见）；静态资源 cache-first + 后台更新。
  * 发版时只需把 VERSION 改掉，旧缓存会在 activate 阶段自动清理。
  */
-const VERSION = 'baguwen-v1.0.0';
+const VERSION = 'baguwen-v1.0.1';
 const CACHE = 'baguwen-' + VERSION;
 
 const ASSETS = [
