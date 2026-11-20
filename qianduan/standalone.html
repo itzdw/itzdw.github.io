@@ -411,7 +411,11 @@ html[data-theme="dark"] .setting-row .ic { color: var(--primary-2); }
 
 /* ---------- 横幅 / Toast / 弹窗 ---------- */
 .banner {
-  position: fixed; z-index: 60; left: 50%; transform: translateX(-50%);
+  /* 居中不依赖 transform：fadeUp 动画的结束态是 transform:none，
+     若用 left:50% + translateX(-50%) 会被动画覆盖，导致横幅向右偏出手机容器。
+     left/right:0 + margin-inline:auto + 固定宽度 可在 fixed 定位下稳定居中。 */
+  position: fixed; z-index: 60;
+  left: 0; right: 0; margin-inline: auto;
   bottom: calc(4.6rem + env(safe-area-inset-bottom));
   width: calc(100% - 1.5rem); max-width: calc(var(--maxw) - 1.5rem);
   display: flex; align-items: center; gap: .6rem;
