@@ -70,14 +70,17 @@
           <el-menu-item index="courses"><span>课程管理</span></el-menu-item>
           <el-menu-item index="contact"><span>联系信息</span></el-menu-item>
           <el-menu-item index="export"><span>生成配置文件</span></el-menu-item>
+          <el-menu-item index="sync"><span>自动同步设置</span></el-menu-item>
         </el-menu>
       </div>
       <div class="main">
         <div class="notice">
           当前编辑站点：<b>{{ currentSite }}</b>（{{ site.name }}）<span v-if="isSuper"> · 可在"学员账号管理"切换站点</span><br>
-          修改只保存在当前页面；完成后到"生成配置文件"导出，覆盖服务器上的 <b>js/site-config.js</b>，刷新前台即对所有访客生效。<br>
-          <span v-if="dirty" style="color:#c45606"><span class="dirty-dot"></span>有未导出的修改</span>
-          <span v-else style="color:#3b7a3b">当前与配置文件一致</span>
+          修改每 10 秒自动保存到浏览器草稿；开启"自动同步"后会每 10 秒自动提交到 GitHub（需配置令牌），无需手动粘贴。<br>
+          <span v-if="dirty" style="color:#c45606"><span class="dirty-dot"></span>有未同步的修改</span>
+          <span v-else style="color:#3b7a3b">已同步</span>
+          <span style="color:#888;margin-left:12px">草稿：{{ draftTime || '尚未保存' }}</span>
+          <span v-if="syncMsg" style="margin-left:12px" :style="{color: syncOk ? '#3b7a3b' : '#c45606'}">同步：{{ syncMsg }}</span>
         </div>
 
         <!-- 学员账号管理（超管） -->
@@ -247,6 +250,44 @@
             <textarea class="code-area" v-model="code" spellcheck="false" placeholder="点击“生成”按钮显示完整配置内容"></textarea>
           </div>
         </template>
+
+        <!-- 自动同步设置 -->
+        <template v-else-if="menu==='sync'">
+          <div class="notice">
+            <b>工作原理：</b>浏览器无法直接写服务器文件，所以这里用 GitHub 的 Contents API 把配置写回仓库。<br>
+            你只需配置一次令牌并开启开关，之后每次修改会在 10 秒内自动提交到 <b>js/site-config.js</b>，前台刷新即生效，<b>不用再手动复制粘贴</b>。<br>
+            <span style="color:#c45606">安全提醒：令牌只保存在当前浏览器（localStorage），请不要在公用电脑使用；建议用"细粒度令牌"仅授权 itzdw.github.io 仓库的 Contents 读写，不要用权限过大的经典令牌。</span>
+          </div>
+          <div class="panel" style="max-width:720px">
+            <h3 class="sub-hd">自动同步设置</h3>
+            <el-form label-width="120px">
+              <el-form-item label="自动同步">
+                <el-switch v-model="syncEnabled" @change="onSyncToggle"></el-switch>
+                <span class="hint" style="margin-left:12px">开启后每 10 秒检查：有修改就自动提交</span>
+              </el-form-item>
+              <el-form-item label="GitHub 令牌">
+                <el-input v-model="syncToken" type="password" show-password placeholder="粘贴 GitHub token（ghp_ 或 github_pat_ 开头）"></el-input>
+              </el-form-item>
+              <el-form-item label="仓库">
+                <el-input v-model="syncRepo" placeholder="owner/repo，如 itzdw/itzdw.github.io"></el-input>
+              </el-form-item>
+              <el-form-item label="分支">
+                <el-input v-model="syncBranch" placeholder="master"></el-input>
+              </el-form-item>
+              <el-form-item label="目标文件">
+                <el-input v-model="syncPath" placeholder="highlife/js/site-config.js"></el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-button type="primary" size="small" @click="saveSyncSettings">保存设置</el-button>
+                <el-button size="small" @click="syncNow">立即同步一次</el-button>
+              </el-form-item>
+            </el-form>
+            <div class="hint">
+              状态：{{ syncMsg || '暂无同步记录' }}<br>
+              最近草稿保存：{{ draftTime || '尚未' }}　·　GitHub Pages 提交后约几十秒才生效，属正常延迟。
+            </div>
+          </div>
+        </template>
       </div>
     </div>
   </div>
@@ -287,6 +328,18 @@ createApp({
     const code = ref('');
     const accountDialog = ref(false);
     const newAccount = ref({user:'',pwd:'',name:'',site:''});
+    // 自动保存/同步
+    const DRAFT_KEY = 'hl_cms_draft_v1';
+    const SYNC_KEY = 'hl_cms_sync_v1';
+    const draftTime = ref('');
+    const syncEnabled = ref(false);
+    const syncToken = ref('');
+    const syncRepo = ref('itzdw/itzdw.github.io');
+    const syncBranch = ref('master');
+    const syncPath = ref('highlife/js/site-config.js');
+    const syncMsg = ref('');
+    const syncOk = ref(true);
+    let lastSyncedText = '';
 
     const isSuper = computed(()=> account.value.role === 'super');
     const site = computed(()=> sites[currentSite.value] || {});
@@ -340,7 +393,7 @@ createApp({
       mark(); ElementPlus.ElMessage.success('已删除');
     }
 
-    function generate(){
+    function buildConfigText(){
       const esc = s => JSON.stringify(String(s == null ? '' : s));
       const L = ['/* HIGH LIFE 多租户站点配置 —— 由管理后台生成 */','','window.HIGHLIFE_ACCOUNTS = ['];
       accounts.value.forEach(a=> L.push('  { user: '+esc(a.user)+', pwd: '+esc(a.pwd)+', role: '+esc(a.role)+', site: '+esc(a.site)+', name: '+esc(a.name)+' },'));
@@ -371,7 +424,10 @@ createApp({
         L.push('  },');
       });
       L.push('};');
-      code.value = L.join('\n');
+      return L.join('\n');
+    }
+    function generate(){
+      code.value = buildConfigText();
       ElementPlus.ElMessage.success('已生成，请复制或下载后覆盖 js/site-config.js');
     }
     function copyCode(){
@@ -390,11 +446,100 @@ createApp({
       ElementPlus.ElMessage.success('已下载');
     }
 
+    // ===== 自动保存草稿（每10秒）=====
+    function saveDraft(){
+      try{
+        localStorage.setItem(DRAFT_KEY, JSON.stringify({
+          sites: deepClone(sites), accounts: deepClone(accounts.value),
+          time: Date.now()
+        }));
+        draftTime.value = new Date().toLocaleTimeString('zh-CN', {hour12:false});
+      }catch(e){ /* 存储失败静默 */ }
+    }
+    function loadDraft(){
+      try{
+        const raw = localStorage.getItem(DRAFT_KEY);
+        if(!raw) return;
+        const d = JSON.parse(raw);
+        if(d && d.sites && d.accounts){
+          Object.keys(sites).forEach(k=> delete sites[k]);
+          Object.assign(sites, d.sites);
+          accounts.value = d.accounts;
+          if(!sites[currentSite.value]) currentSite.value = Object.keys(sites)[0];
+          dirty.value = true; // 草稿可能与服务器不同步
+          if(d.time) draftTime.value = new Date(d.time).toLocaleTimeString('zh-CN', {hour12:false});
+        }
+      }catch(e){}
+    }
+
+    // ===== 自动同步到 GitHub（每10秒）=====
+    function saveSyncSettings(){
+      try{
+        localStorage.setItem(SYNC_KEY, JSON.stringify({
+          enabled:syncEnabled.value, token:syncToken.value, repo:syncRepo.value,
+          branch:syncBranch.value, path:syncPath.value
+        }));
+      }catch(e){}
+      ElementPlus.ElMessage.success('同步设置已保存（仅存于当前浏览器）');
+    }
+    function loadSyncSettings(){
+      try{
+        const raw = localStorage.getItem(SYNC_KEY);
+        if(!raw) return;
+        const s = JSON.parse(raw);
+        syncEnabled.value = !!s.enabled; syncToken.value = s.token||'';
+        syncRepo.value = s.repo||syncRepo.value; syncBranch.value = s.branch||syncBranch.value;
+        syncPath.value = s.path||syncPath.value;
+      }catch(e){}
+    }
+    function onSyncToggle(){ saveSyncSettings(); }
+    function b64(s){ return btoa(unescape(encodeURIComponent(s))); }
+    async function syncNow(){
+      if(!syncToken.value){ ElementPlus.ElMessage.warning('请先填写 GitHub 令牌'); return; }
+      if(!syncRepo.value || !syncRepo.value.includes('/')){ ElementPlus.ElMessage.warning('仓库格式应为 owner/repo'); return; }
+      const text = buildConfigText();
+      if(text === lastSyncedText && !dirty.value){ syncMsg.value = '无变化，跳过'; syncOk.value = true; return; }
+      syncMsg.value = '同步中...';
+      try{
+        const headers = {'Authorization':'Bearer '+syncToken.value,'Accept':'application/vnd.github+json','Content-Type':'application/json'};
+        const base = 'https://api.github.com/repos/'+syncRepo.value+'/contents/'+syncPath.value;
+        // 先取当前 sha（更新文件必须带 sha）
+        let sha = '';
+        const getResp = await fetch(base+'?ref='+encodeURIComponent(syncBranch.value), {headers});
+        if(getResp.ok){ const gj = await getResp.json(); sha = gj.sha||''; }
+        else if(getResp.status !== 404){ throw new Error('读取文件失败 HTTP '+getResp.status); }
+        const body = {message:'Auto-sync site config', content:b64(text), branch:syncBranch.value};
+        if(sha) body.sha = sha;
+        const putResp = await fetch(base, {method:'PUT', headers, body:JSON.stringify(body)});
+        if(!putResp.ok){ const e = await putResp.json().catch(()=>({})); throw new Error(e.message||('HTTP '+putResp.status)); }
+        lastSyncedText = text; dirty.value = false; syncOk.value = true;
+        syncMsg.value = '成功 '+new Date().toLocaleTimeString('zh-CN',{hour12:false});
+      }catch(e){
+        syncOk.value = false; syncMsg.value = '失败：'+String(e.message||e).slice(0,60);
+      }
+    }
+    function tick(){
+      if(!logged.value) return;
+      saveDraft();
+      if(syncEnabled.value && syncToken.value && dirty.value) syncNow();
+    }
+
     onMounted(()=>{
+      loadSyncSettings();
       const u = sessionStorage.getItem('hl_admin_user');
-      if(u){ const a=accounts.value.find(x=>x.user===u); if(a){ logged.value=true; account.value=deepClone(a); currentSite.value=a.role==='super'?Object.keys(sites)[0]:a.site; menu.value=a.role==='super'?'accounts':'basic'; } }
+      if(u){
+        const a=accounts.value.find(x=>x.user===u);
+        if(a){
+          logged.value=true; account.value=deepClone(a);
+          currentSite.value=a.role==='super'?Object.keys(sites)[0]:a.site;
+          menu.value=a.role==='super'?'accounts':'basic';
+          loadDraft();
+          lastSyncedText = buildConfigText();
+        }
+      }
+      setInterval(tick, 10000); // 每10秒自动保存 + 条件同步
     });
-    return { logged,account,login,sites,accounts,currentSite,menu,dirty,code,accountDialog,newAccount,isSuper,site,imgOptions,mark,doLogin,logout,onMenu,switchSite,addBanner,addCourse,openAccount,saveAccount,delAccount,generate,copyCode,download };
+    return { logged,account,login,sites,accounts,currentSite,menu,dirty,code,accountDialog,newAccount,isSuper,site,imgOptions,draftTime,syncEnabled,syncToken,syncRepo,syncBranch,syncPath,syncMsg,syncOk,mark,doLogin,logout,onMenu,switchSite,addBanner,addCourse,openAccount,saveAccount,delAccount,generate,copyCode,download,saveSyncSettings,onSyncToggle,syncNow };
   }
 }).use(ElementPlus).mount('#app');
 </script>
