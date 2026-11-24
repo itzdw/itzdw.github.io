@@ -55,6 +55,7 @@
       <div>
         <span style="color:#888;margin-right:14px">{{ account.name }}（{{ account.user }}）</span>
         <a class="site-link" :href="'index.html?t='+currentSite" target="_blank">预览我的站点</a>
+        <a class="site-link" style="margin-left:10px" :href="'index.html?t='+currentSite+'&edit=1'" target="_blank" title="在新页面直接点击文字/图片/卡片进行可视化编辑">✏️ 可视化编辑</a>
         <el-button size="small" style="margin-left:12px" @click="logout">退出</el-button>
       </div>
     </div>
