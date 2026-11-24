@@ -93,6 +93,6 @@ window.HIGHLIFE_SITES = {
       { id: 14, name: "AROMATICA LABO洗发饼认证课程", price: "￥2280", img: "images/img_031.jpg" },
     ],
     contact: { intro: "关于课程咨询和报名，欢迎联系我们。", email: "Email：bella_highlife@qq.com", tel: "Tel : 13414466970", addr: "Tianjin Binhai New Area Zhongxin Ecological City Shimao Jiuxi 3402", brand: "品牌文字", formLabel: "在线表单提交" },
-    footer: "Copyright @ 2024. HIGH LIFE"
+    footer: "Copyright @ 2026. HIGH LIFE"
   },
 };
