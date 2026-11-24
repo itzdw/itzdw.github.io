@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>HIGH LIFE 管理后台</title>
+<link rel="stylesheet" href="vendor/element-plus.css">
+<style>
+  html,body,#app{height:100%;margin:0}
+  body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+  .login-page{height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#469bb7,#69cbe8)}
+  .login-card{width:360px;background:#fff;border-radius:10px;padding:34px 30px;box-shadow:0 12px 40px rgba(0,0,0,.15)}
+  .login-card h1{font-size:20px;margin:0 0 6px;color:#222;text-align:center}
+  .login-card .sub{text-align:center;color:#999;font-size:13px;margin-bottom:24px}
+  .login-card .logo{width:52px;height:52px;margin:0 auto 14px;border-radius:50%;background:#eef8fb;display:flex;align-items:center;justify-content:center;font-size:24px;color:#469bb7}
+  .dash{height:100vh;display:flex;flex-direction:column;background:#f5f7f9}
+  .dash-header{height:56px;background:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 22px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+  .dash-header .brand{font-size:17px;font-weight:600;color:#469bb7}
+  .dash-body{flex:1;display:flex;min-height:0}
+  .side{width:200px;background:#fff;border-right:1px solid #eef0f2;padding-top:12px}
+  .main{flex:1;padding:20px 24px;overflow:auto}
+  .stat-row{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap}
+  .stat-card{flex:1;min-width:160px;background:#fff;border-radius:8px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+  .stat-card .n{font-size:28px;font-weight:600;color:#469bb7}
+  .stat-card .l{font-size:13px;color:#888;margin-top:4px}
+  .panel{background:#fff;border-radius:8px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+  .thumb{width:46px;height:46px;object-fit:cover;border-radius:4px}
+  .hint{font-size:12px;color:#999;margin-top:10px}
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- 登录 -->
+  <div v-if="!logged" class="login-page">
+    <div class="login-card">
+      <div class="logo">H</div>
+      <h1>HIGH LIFE 管理后台</h1>
+      <div class="sub">课程与内容管理</div>
+      <el-form ref="loginForm" :model="login" :rules="rules" label-position="top" @keyup.enter="doLogin">
+        <el-form-item label="管理员账号" prop="user">
+          <el-input v-model="login.user" placeholder="请输入账号" prefix-icon="User"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="pwd">
+          <el-input v-model="login.pwd" type="password" placeholder="请输入密码" show-password prefix-icon="Lock"></el-input>
+        </el-form-item>
+        <el-button type="primary" style="width:100%;margin-top:6px" @click="doLogin">登录</el-button>
+      </el-form>
+      <div class="hint">演示账号：admin&nbsp;&nbsp;密码：admin123</div>
+    </div>
+  </div>
+
+  <!-- 后台 -->
+  <div v-else class="dash">
+    <div class="dash-header">
+      <div class="brand">HIGH LIFE 管理后台</div>
+      <div><span style="color:#888;margin-right:14px">管理员：{{ login.user }}</span><el-button size="small" @click="logout">退出</el-button></div>
+    </div>
+    <div class="dash-body">
+      <div class="side">
+        <el-menu :default-active="menu" @select="k=>menu=k">
+          <el-menu-item index="dash"><span>数据看板</span></el-menu-item>
+          <el-menu-item index="courses"><span>课程管理</span></el-menu-item>
+          <el-menu-item index="site"><span>站点信息</span></el-menu-item>
+        </el-menu>
+      </div>
+      <div class="main">
+        <!-- 看板 -->
+        <template v-if="menu==='dash'">
+          <div class="stat-row">
+            <div class="stat-card"><div class="n">{{ courses.length }}</div><div class="l">课程总数</div></div>
+            <div class="stat-card"><div class="n">{{ hotCount }}</div><div class="l">首页人气课程</div></div>
+            <div class="stat-card"><div class="n">9</div><div class="l">合作伙伴</div></div>
+          </div>
+          <div class="panel">
+            <div class="toolbar"><h3 style="margin:0">最近课程</h3><el-button size="small" type="primary" @click="menu='courses'">管理课程</el-button></div>
+            <el-table :data="courses.slice(0,6)" size="small" border>
+              <el-table-column label="课程封面" width="80"><template #default="s"><img class="thumb" :src="s.row.img"></template></el-table-column>
+              <el-table-column prop="name" label="课程名称"></el-table-column>
+              <el-table-column prop="price" label="价格" width="100"></el-table-column>
+            </el-table>
+          </div>
+        </template>
+
+        <!-- 课程管理 -->
+        <template v-else-if="menu==='courses'">
+          <div class="panel">
+            <div class="toolbar">
+              <h3 style="margin:0">课程管理</h3>
+              <el-button type="primary" size="small" @click="openAdd">+ 新增课程</el-button>
+            </div>
+            <el-table :data="courses" size="small" border>
+              <el-table-column label="封面" width="80"><template #default="s"><img class="thumb" :src="s.row.img"></template></el-table-column>
+              <el-table-column prop="name" label="课程名称" show-overflow-tooltip></el-table-column>
+              <el-table-column prop="price" label="价格" width="100"></el-table-column>
+              <el-table-column label="操作" width="150">
+                <template #default="s">
+                  <el-button size="small" @click="openEdit(s.row)">编辑</el-button>
+                  <el-button size="small" type="danger" @click="del(s.row.id)">删除</el-button>
+                </template>
+              </el-table-column>
+            </el-table>
+            <div class="hint">修改后前台页面会自动同步（同一浏览器）。</div>
+          </div>
+        </template>
+
+        <!-- 站点信息 -->
+        <template v-else>
+          <div class="panel" style="max-width:560px">
+            <h3 style="margin:0 0 16px">站点信息</h3>
+            <el-descriptions :column="1" border>
+              <el-descriptions-item label="站点名称">highlife-culture</el-descriptions-item>
+              <el-descriptions-item label="简介">蜡烛、手工皂专业课程国际培训平台</el-descriptions-item>
+              <el-descriptions-item label="Email">bella_highlife@qq.com</el-descriptions-item>
+              <el-descriptions-item label="Tel">18601365446</el-descriptions-item>
+              <el-descriptions-item label="地址">天津滨海新区中新生态城世茂玖熙 3402</el-descriptions-item>
+              <el-descriptions-item label="管理员">admin</el-descriptions-item>
+            </el-descriptions>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+
+  <!-- 课程编辑弹窗 -->
+  <el-dialog v-model="dialog" :title="editing?'编辑课程':'新增课程'" width="480px">
+    <el-form :model="form" label-width="80px">
+      <el-form-item label="课程名称"><el-input v-model="form.name" placeholder="请输入课程名称"></el-input></el-form-item>
+      <el-form-item label="价格"><el-input v-model="form.price" placeholder="如 ￥9800"></el-input></el-form-item>
+      <el-form-item label="封面图">
+        <el-select v-model="form.img" placeholder="选择封面" style="width:100%">
+          <el-option v-for="c in imgOptions" :key="c.v" :label="c.l" :value="c.v"></el-option>
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <el-button @click="dialog=false">取消</el-button>
+      <el-button type="primary" @click="save">保存</el-button>
+    </template>
+  </el-dialog>
+</div>
+
+<script src="vendor/vue.global.prod.js"></script>
+<script src="vendor/element-plus.full.min.js"></script>
+<script src="js/data.js"></script>
+<script>
+const { createApp, ref, computed, onMounted } = Vue;
+createApp({
+  setup(){
+    const logged = ref(false);
+    const login = ref({user:'',pwd:''});
+    const rules = {
+      user:[{required:true,message:'请输入账号',trigger:'blur'}],
+      pwd:[{required:true,message:'请输入密码',trigger:'blur'}]
+    };
+    const menu = ref('dash');
+    const courses = ref([]);
+    const dialog = ref(false);
+    const editing = ref(false);
+    const form = ref({id:null,name:'',price:'',img:''});
+    const imgOptions = [];
+    for(let i=3;i<=8;i++) imgOptions.push({v:'images/img_00'+i+'.jpg',l:'课程图 '+i});
+    for(let i=24;i<=31;i++) imgOptions.push({v:'images/img_0'+i+'.jpg',l:'课程图 '+i});
+    const hotCount = computed(()=>Math.min(courses.value.length,6));
+
+    function load(){
+      try{ courses.value = JSON.parse(localStorage.getItem(window.HIGHLIFE_DATA_KEY)||'[]'); }
+      catch(e){ courses.value = window.HIGHLIFE_SEED.slice(); }
+    }
+    function persist(){ localStorage.setItem(window.HIGHLIFE_DATA_KEY, JSON.stringify(courses.value)); }
+    function doLogin(){
+      if(login.value.user==='admin' && login.value.pwd==='admin123'){
+        logged.value = true; sessionStorage.setItem('hl_admin','1'); load();
+        ElementPlus.ElMessage.success('登录成功');
+      } else { ElementPlus.ElMessage.error('账号或密码错误'); }
+    }
+    function logout(){ logged.value=false; sessionStorage.removeItem('hl_admin'); login.value={user:'',pwd:''}; }
+    function openAdd(){ editing.value=false; form.value={id:null,name:'',price:'',img:imgOptions[0].v}; dialog.value=true; }
+    function openEdit(row){ editing.value=true; form.value=Object.assign({},row); dialog.value=true; }
+    function save(){
+      if(!form.value.name.trim()){ ElementPlus.ElMessage.warning('请填写课程名称'); return; }
+      if(editing.value){
+        const i = courses.value.findIndex(c=>c.id===form.value.id);
+        if(i>=0) courses.value[i] = Object.assign({},form.value);
+      } else {
+        courses.value.push(Object.assign({},form.value,{id:Date.now()}));
+      }
+      persist(); dialog.value=false; ElementPlus.ElMessage.success('已保存');
+    }
+    function del(id){ courses.value = courses.value.filter(c=>c.id!==id); persist(); ElementPlus.ElMessage.success('已删除'); }
+    onMounted(()=>{ if(sessionStorage.getItem('hl_admin')==='1'){ logged.value=true; load(); } });
+    return { logged,login,rules,doLogin,logout,menu,courses,hotCount,dialog,editing,form,imgOptions,openAdd,openEdit,save,del };
+  }
+}).use(ElementPlus).mount('#app');
+</script>
+</body>
+</html>
