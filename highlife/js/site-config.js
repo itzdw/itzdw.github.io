@@ -58,8 +58,8 @@ window.HIGHLIFE_SITES = {
       { img: "images/img_019.jpg", title: "国际化 · 专业化", sub: "国际技术交流平台" },
       { img: "images/img_010.jpg", title: "蜡烛艺术", sub: "JCA 认证课程体系" },
     ],
-    hotTitle: "李四人气课程", highLead: "HIGH LIFE只提供", highTitle: "高品质课程", highPic: "images/img_009.jpg",
-    partnerTitle: "我们重要合作伙伴",
+    hotTitle: "李四人气课程", highLead: "HIGH LIFE只提供", highTitle: "李四高品质课程", highPic: "images/img_009.jpg",
+    partnerTitle: "我们李四重要合作伙伴",
     partners: [
       { img: "images/img_011.jpg", name: "JCA日本蜡烛协会" },
       { img: "images/img_012.jpg", name: "AROMATICA LABO" },
@@ -68,14 +68,14 @@ window.HIGHLIFE_SITES = {
       { img: "images/img_015.jpg", name: "TOKYO CANDLE" },
       { img: "images/img_016.jpg", name: "SSDA" },
     ],
-    whyTitle: "Why choose us？", whySub: "为什么选择我们",
+    whyTitle: "Why choose us？", whySub: "为什么选择我们李四",
     whyItems: [
       { img: "images/img_020.png", title: "国际化的交流平台", desc: "通过与国外优秀手作培训平台的合作，实现国际技术交流。" },
       { img: "images/img_021.png", title: "高品质，专业机构", desc: "HIGH LIFE开手作培训工作室已有9年，高品质、专业课程就是HIGHLIFE最重要的标签。" },
       { img: "images/img_023.png", title: "引领行业，引领风向", desc: "对市场的变化洞察敏锐，坚持做引领行业、引领风向的项目。" },
       { img: "images/img_022.png", title: "蜡烛&手工皂专业培训", desc: "运营国内外优秀机构的蜡烛&手工皂专业课程。" },
     ],
-    coursesTitle: "我们的课程",
+    coursesTitle: "李四的课程",
     courses: [
       { id: 1, name: "KACA冷制皂指导师范认证课程", price: "￥9800", img: "images/img_003.jpg" },
       { id: 2, name: "日本JCA蜡烛艺术家认证课程", price: "￥1.38万", img: "images/img_004.jpg" },
