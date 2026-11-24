@@ -47,7 +47,7 @@ window.HIGHLIFE_SITES = {
       { id: 13, name: "蜜蜡花专题课程", price: "￥4800", img: "images/img_030.jpg" },
       { id: 14, name: "AROMATICA LABO洗发饼认证课程", price: "￥2280", img: "images/img_031.jpg" },
     ],
-    contact: { intro: "关于课程咨询和报名，欢迎联系我们。", email: "Email：bella_highlife@qq.com", tel: "Tel : 13414466971", addr: "Tianjin Binhai New Area Zhongxin Ecological City Shimao Jiuxi 3402", brand: "66666666", formLabel: "在线表单提交" },
+    contact: { intro: "关于课程咨询和报名，欢迎联系我们。", email: "Email：bella_highlife@qq.com", tel: "Tel : 13414466970", addr: "Tianjin Binhai New Area Zhongxin Ecological City Shimao Jiuxi 3402", brand: "品牌", formLabel: "在线表单提交" },
     footer: "Copyright @ 2024. HIGH LIFE"
   },
 };
