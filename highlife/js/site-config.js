@@ -10,7 +10,7 @@ window.HIGHLIFE_SITES = {
     name: "HIGH LIFE（演示站）", logo: "images/img_001.jpg",
     hidden: [],
     banners: [
-      { img: "images/img_009.jpg", title: "高品质课程", sub: "HIGH LIFE 只提供" },
+      { img: "images/img_001.jpg", title: "高品质课程", sub: "HIGH LIFE 只提供" },
       { img: "images/img_019.jpg", title: "国际化 · 专业化", sub: "国际技术交流平台" },
       { img: "images/img_010.jpg", title: "蜡烛艺术", sub: "JCA 认证课程体系" },
     ],
