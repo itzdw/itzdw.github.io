@@ -402,10 +402,12 @@ createApp({
         const s = sites[sid];
         L.push('  '+esc(sid)+': {');
         L.push('    name: '+esc(s.name)+', logo: '+esc(s.logo)+',');
+        L.push('    hidden: '+JSON.stringify(s.hidden||[])+',');
         L.push('    banners: [');
         (s.banners||[]).forEach(b=> L.push('      { img: '+esc(b.img)+', title: '+esc(b.title)+', sub: '+esc(b.sub)+' },'));
         L.push('    ],');
         L.push('    hotTitle: '+esc(s.hotTitle)+', highLead: '+esc(s.highLead)+', highTitle: '+esc(s.highTitle)+', highPic: '+esc(s.highPic)+',');
+        L.push('    aboutImg: '+esc(s.aboutImg)+', aboutLead: '+esc(s.aboutLead)+', aboutTitle: '+esc(s.aboutTitle)+',');
         L.push('    partnerTitle: '+esc(s.partnerTitle)+',');
         L.push('    partners: [');
         (s.partners||[]).forEach(p=> L.push('      { img: '+esc(p.img)+', name: '+esc(p.name)+' },'));
