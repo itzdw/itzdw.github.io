@@ -4,7 +4,7 @@
  * 在预览页直接点击元素进行：编辑文字 / 更换图片 / 隐藏·显示板块 /
  * 卡片的编辑、排序、删除、添加。所有修改写入与后台共用的
  * localStorage 草稿（hl_cms_draft_v1），后台打开后会自动同步到 GitHub。
- * 进入方式：页面右下角「编辑」按钮（需后台账号登录）或 URL ?edit=1
+ * 进入方式：后台「✏️ 可视化编辑」跳转（index.html?t=站点ID&edit=1，需后台账号登录）；前台展示页不显示任何编辑入口
  * ============================================================ */
 (function () {
   if (!window.HL) return;
@@ -52,8 +52,7 @@
 
   // ---------- 基础样式 ----------
   var css = [
-    '#hlToolbar,#hlBar,#hlFab,.hl-sec-chip,#hlToast,#hlDraftBadge{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;box-sizing:border-box}',
-    '#hlFab{position:fixed;right:12px;bottom:76px;z-index:9998;background:#469bb7;color:#fff;border:none;border-radius:24px;padding:10px 18px;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,.25);cursor:pointer}',
+    '#hlToolbar,#hlBar,.hl-sec-chip,#hlToast,#hlDraftBadge{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;box-sizing:border-box}',
     '#hlToolbar{position:fixed;top:0;left:0;right:0;z-index:10001;background:#1f2d3d;color:#fff;display:flex;align-items:center;gap:8px;padding:8px 10px;font-size:13px}',
     '#hlToolbar .hl-tt{font-weight:bold;margin-right:auto}',
     '#hlToolbar button{background:#469bb7;border:none;color:#fff;border-radius:4px;padding:6px 12px;font-size:13px;cursor:pointer}',
@@ -581,31 +580,19 @@
     closeModal();
     if (textEditing) textEditing = false;
     saveDraft();
-    showFab();
     HL.render();
-    toast('已保存草稿。打开后台页面会自动同步到 GitHub 生效');
+    toast('已保存草稿。回到后台页面会自动同步到 GitHub 生效');
   }
 
-  // ---------- 编辑入口 FAB ----------
-  var fab = null;
-  function showFab() {
-    if (fab) return;
-    fab = document.createElement('button');
-    fab.id = 'hlFab';
-    fab.textContent = '✏️ 编辑此页';
-    fab.addEventListener('click', function () {
-      if (isLoggedIn()) enterEdit();
-      else loginModal();
-    });
-    document.body.appendChild(fab);
-  }
+  // ---------- 编辑入口（已移除前台 FAB，仅保留 ?edit=1 后台跳转入口） ----------
   function hideFab() {
-    if (fab) { fab.parentNode.removeChild(fab); fab = null; }
+    var f = document.getElementById('hlFab');
+    if (f) f.parentNode.removeChild(f);
   }
 
   // ---------- 初始化 ----------
   var t = document.createElement('div'); t.id = 'hlToast'; document.body.appendChild(t);
-  showFab();
+  // 展示页不再显示「编辑此页」按钮；编辑入口统一由后台「✏️ 可视化编辑」跳转（?edit=1）
   // 草稿预览角标（当前页面展示的是本地草稿而非线上文件时提示）
   if (HL.draftTime) {
     var badge = document.createElement('div');
