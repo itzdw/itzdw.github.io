@@ -1,10 +1,7 @@
 (function () {
+  // 课程数据完全来自 data.js（静态数据源），页面打开时读取一次
   function getCourses() {
-    try {
-      var raw = localStorage.getItem(window.HIGHLIFE_DATA_KEY);
-      var arr = raw ? JSON.parse(raw) : window.HIGHLIFE_SEED;
-      return Array.isArray(arr) ? arr : window.HIGHLIFE_SEED;
-    } catch (e) { return window.HIGHLIFE_SEED; }
+    return Array.isArray(window.HIGHLIFE_COURSES) ? window.HIGHLIFE_COURSES : [];
   }
   function card(c) {
     var d = document.createElement('a');
@@ -26,7 +23,6 @@
     if (allBox) { allBox.innerHTML = ''; all.forEach(function (c) { allBox.appendChild(card(c)); }); }
   }
   render();
-  window.addEventListener('storage', render);
 
   // 轮播
   var slides = [
