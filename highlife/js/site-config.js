@@ -58,7 +58,7 @@ window.HIGHLIFE_SITES = {
       { img: "images/img_019.jpg", title: "国际化 · 专业化", sub: "国际技术交流平台" },
       { img: "images/img_010.jpg", title: "蜡烛艺术", sub: "JCA 认证课程体系" },
     ],
-    hotTitle: "人气课程", highLead: "HIGH LIFE只提供", highTitle: "高品质课程", highPic: "images/img_009.jpg",
+    hotTitle: "李四人气课程", highLead: "HIGH LIFE只提供", highTitle: "高品质课程", highPic: "images/img_009.jpg",
     partnerTitle: "我们重要合作伙伴",
     partners: [
       { img: "images/img_011.jpg", name: "JCA日本蜡烛协会" },
