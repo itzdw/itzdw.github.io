@@ -494,28 +494,52 @@ createApp({
     }
     function onSyncToggle(){ saveSyncSettings(); }
     function b64(s){ return btoa(unescape(encodeURIComponent(s))); }
+    let syncing = false; // 防止 10 秒定时器并发提交（并发会拿到同一个 sha，后提交者 409）
+    async function syncOnce(headers, base, text){
+      // 关键：GET 必须禁用缓存并带随机参数，否则浏览器可能返回旧 sha 导致 409
+      const getResp = await fetch(base+'?ref='+encodeURIComponent(syncBranch.value)+'&_t='+Date.now(), {
+        headers, cache:'no-store'
+      });
+      let sha = '';
+      if(getResp.ok){ const gj = await getResp.json(); sha = gj.sha||''; }
+      else if(getResp.status !== 404){ throw new Error('读取文件失败 HTTP '+getResp.status); }
+      const body = {message:'Auto-sync site config', content:b64(text), branch:syncBranch.value};
+      if(sha) body.sha = sha;
+      const putResp = await fetch(base, {method:'PUT', headers, body:JSON.stringify(body)});
+      if(putResp.ok) return true;
+      const err = await putResp.json().catch(()=>({}));
+      const e = new Error(err.message||('HTTP '+putResp.status)); e.status = putResp.status; throw e;
+    }
     async function syncNow(){
+      if(syncing) return; // 上一次还没完成，直接跳过这一轮
       if(!syncToken.value){ ElementPlus.ElMessage.warning('请先填写 GitHub 令牌'); return; }
       if(!syncRepo.value || !syncRepo.value.includes('/')){ ElementPlus.ElMessage.warning('仓库格式应为 owner/repo'); return; }
       const text = buildConfigText();
       if(text === lastSyncedText && !dirty.value){ syncMsg.value = '无变化，跳过'; syncOk.value = true; return; }
-      syncMsg.value = '同步中...';
+      syncing = true; syncMsg.value = '同步中...';
       try{
         const headers = {'Authorization':'Bearer '+syncToken.value,'Accept':'application/vnd.github+json','Content-Type':'application/json'};
         const base = 'https://api.github.com/repos/'+syncRepo.value+'/contents/'+syncPath.value;
-        // 先取当前 sha（更新文件必须带 sha）
-        let sha = '';
-        const getResp = await fetch(base+'?ref='+encodeURIComponent(syncBranch.value), {headers});
-        if(getResp.ok){ const gj = await getResp.json(); sha = gj.sha||''; }
-        else if(getResp.status !== 404){ throw new Error('读取文件失败 HTTP '+getResp.status); }
-        const body = {message:'Auto-sync site config', content:b64(text), branch:syncBranch.value};
-        if(sha) body.sha = sha;
-        const putResp = await fetch(base, {method:'PUT', headers, body:JSON.stringify(body)});
-        if(!putResp.ok){ const e = await putResp.json().catch(()=>({})); throw new Error(e.message||('HTTP '+putResp.status)); }
-        lastSyncedText = text; dirty.value = false; syncOk.value = true;
-        syncMsg.value = '成功 '+new Date().toLocaleTimeString('zh-CN',{hour12:false});
+        let done = false;
+        try{
+          done = await syncOnce(headers, base, text);
+        }catch(e){
+          // 409 冲突：sha 过期，重新取最新 sha 再试一次
+          if(e.status === 409){ done = await syncOnce(headers, base, text); }
+          else throw e;
+        }
+        if(done){
+          lastSyncedText = text; dirty.value = false; syncOk.value = true;
+          syncMsg.value = '成功 '+new Date().toLocaleTimeString('zh-CN',{hour12:false});
+        }
       }catch(e){
-        syncOk.value = false; syncMsg.value = '失败：'+String(e.message||e).slice(0,60);
+        syncOk.value = false;
+        const m = String(e.message||e);
+        syncMsg.value = m.indexOf('Bad credentials')>=0 ? '令牌无效，请重新生成'
+          : m.indexOf('Resource not accessible')>=0 ? '令牌权限不足，需 Contents 读写'
+          : '失败：'+m.slice(0,50);
+      }finally{
+        syncing = false;
       }
     }
     function tick(){
