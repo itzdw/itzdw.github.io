@@ -10,93 +10,68 @@
 <body>
 <div class="wap">
 
-  <!-- 顶部搜索 -->
   <header class="topbar">
-    <div class="searchbox">
-      <span class="search-ico"></span>
-      <span class="search-ph">关键词</span>
-    </div>
-    <div class="brand-logo"><img src="images/img_001.jpg" alt="HIGH LIFE"></div>
+    <div class="searchbox"><span class="search-ico"></span><span class="search-ph">关键词</span></div>
+    <div class="brand-logo"><img id="logoImg" src="images/img_001.jpg" alt=""></div>
   </header>
 
-  <!-- 轮播 -->
   <section class="banner" id="banner">
     <div class="banner-track" id="bannerTrack"></div>
     <div class="banner-dots" id="bannerDots"></div>
   </section>
 
-  <!-- 人气课程 -->
   <section class="mod">
-    <div class="mod-hd"><h2>人气课程</h2><span class="hd-line"></span></div>
+    <div class="mod-hd"><h2 id="hotTitle">人气课程</h2><span class="hd-line"></span></div>
     <div class="course-grid" id="hotCourses"></div>
     <div class="more-wrap"><a class="more-btn" href="#courses">更多</a></div>
   </section>
 
-  <!-- 高品质课程 -->
   <section class="mod mod-hl">
-    <div class="hl-pic"><img src="images/img_009.jpg" alt="高品质课程"></div>
-    <p class="hl-lead">HIGH LIFE只提供</p>
-    <h2 class="hl-title">高品质课程</h2>
+    <div class="hl-pic"><img id="highPic" src="images/img_009.jpg" alt=""></div>
+    <p class="hl-lead" id="highLead">HIGH LIFE只提供</p>
+    <h2 class="hl-title" id="highTitle">高品质课程</h2>
     <div class="more-wrap"><a class="more-btn" href="#courses">更多</a></div>
   </section>
 
-  <!-- 合作伙伴 -->
   <section class="mod">
-    <div class="mod-hd"><h2>我们重要合作伙伴</h2><span class="hd-line"></span></div>
-    <div class="partner-grid">
-      <div class="partner"><img src="images/img_011.jpg" alt="JCA日本蜡烛协会"><span>JCA日本蜡烛协会</span></div>
-      <div class="partner"><img src="images/img_012.jpg" alt="AROMATICA LABO"><span>AROMATICA LABO</span></div>
-      <div class="partner"><img src="images/img_013.jpg" alt="KACA韩国芳香协会"><span>KACA韩国芳香协会</span></div>
-      <div class="partner"><img src="images/img_014.png" alt="HASTABLE"><span>HASTABLE</span></div>
-      <div class="partner"><img src="images/img_015.jpg" alt="TOKYO CANDLE"><span>TOKYO CANDLE</span></div>
-      <div class="partner"><img src="images/img_016.jpg" alt="SSDA"><span>SSDA</span></div>
-    </div>
+    <div class="mod-hd"><h2 id="partnerTitle">我们重要合作伙伴</h2><span class="hd-line"></span></div>
+    <div class="partner-grid" id="partnerGrid"></div>
     <div class="more-wrap"><a class="more-btn" href="#about">更多</a></div>
   </section>
 
-  <!-- 国际化背景 -->
   <section class="feature-bg" id="about">
-    <img src="images/img_019.jpg" alt="国际化 专业化 平台化">
+    <img src="images/img_019.jpg" alt="">
     <div class="feature-bg-txt"><p>通过与国外优秀手作培训平台的合作，实现国际技术交流。</p><h2>国际化 · 专业化 · 平台化</h2></div>
   </section>
 
-  <!-- Why choose us -->
   <section class="why">
-    <div class="why-hd"><h2>Why choose us？</h2><span>为什么选择我们</span></div>
-    <div class="why-list">
-      <div class="why-item"><span class="why-ico"><img src="images/img_020.png" alt=""></span><div><h3>国际化的交流平台</h3><p>通过与国外优秀手作培训平台的合作，实现国际技术交流。</p></div></div>
-      <div class="why-item"><span class="why-ico"><img src="images/img_021.png" alt=""></span><div><h3>高品质，专业机构</h3><p>HIGH LIFE开手作培训工作室已有9年，高品质、专业课程就是HIGHLIFE最重要的标签。</p></div></div>
-      <div class="why-item"><span class="why-ico"><img src="images/img_023.png" alt=""></span><div><h3>引领行业，引领风向</h3><p>对市场的变化洞察敏锐，坚持做引领行业、引领风向的项目。</p></div></div>
-      <div class="why-item"><span class="why-ico"><img src="images/img_022.png" alt=""></span><div><h3>蜡烛&amp;手工皂专业培训</h3><p>运营国内外优秀机构的蜡烛&amp;手工皂专业课程。</p></div></div>
-    </div>
+    <div class="why-hd"><h2 id="whyTitle">Why choose us？</h2><span id="whySub">为什么选择我们</span></div>
+    <div class="why-list" id="whyList"></div>
   </section>
 
-  <!-- 我们的课程 -->
   <section class="mod" id="courses">
-    <div class="mod-hd"><h2>我们的课程</h2><span class="hd-line"></span></div>
+    <div class="mod-hd"><h2 id="coursesTitle">我们的课程</h2><span class="hd-line"></span></div>
     <div class="course-grid" id="allCourses"></div>
     <div class="more-wrap"><a class="more-btn" href="#courses">更多</a></div>
   </section>
 
-  <!-- 联系 -->
   <section class="contact" id="contact">
-    <p>关于课程咨询和报名，欢迎联系我们。</p>
-    <p>Email：bella_highlife@qq.com</p>
-    <p>Tel : 18601365446</p>
-    <p class="addr">Tianjin Binhai New Area Zhongxin Ecological City Shimao Jiuxi 3402</p>
-    <p class="cbrand">HIGH LIFE_culture</p>
+    <p id="contactIntro"></p>
+    <p id="contactEmail"></p>
+    <p id="contactTel"></p>
+    <p class="addr" id="contactAddr"></p>
+    <p class="cbrand" id="contactBrand"></p>
     <div class="cform">
-      <label>在线表单提交</label>
+      <label id="formLabel"></label>
       <input type="text" placeholder="Email：">
       <button type="button" id="submitBtn">提交</button>
       <span class="form-tip" id="formTip"></span>
     </div>
   </section>
 
-  <footer class="footer">Copyright @ 2024. HIGH LIFE</footer>
+  <footer class="footer" id="footerText"></footer>
 </div>
 
-<!-- 右侧浮动客服 -->
 <div class="float-tools">
   <a href="#contact" title="微信"><img src="images/img_035.png" alt="微信"></a>
   <a href="#contact" title="QQ"><img src="images/img_036.png" alt="QQ"></a>
@@ -104,14 +79,12 @@
   <a href="#contact" title="链接"><img src="images/img_038.png" alt="链接"></a>
 </div>
 
-<!-- 底部导航 -->
 <nav class="tabbar">
   <a href="#top" class="on"><img src="images/img_042.png" alt=""><span>Home</span></a>
   <a href="tel:18601365446"><img src="images/img_043.png" alt=""><span>Tel.</span></a>
   <a href="admin.html"><img src="images/img_044.png" alt=""><span>Sign in</span></a>
 </nav>
 
-<!-- 更多菜单 -->
 <div class="menu-mask" id="menuMask"></div>
 <div class="menu-panel" id="menuPanel">
   <div class="menu-grid">
@@ -127,7 +100,7 @@
   <div class="menu-links"><a href="#top">首页</a><a href="#about">关于我们</a><a href="#courses">课程种类</a><a href="#courses">录播课程</a><a href="#about">最新活动消息</a><a href="#contact">联系我们</a></div>
 </div>
 
-<script src="js/data.js"></script>
+<script src="js/site-config.js"></script>
 <script src="js/app.js"></script>
 </body>
 </html>
