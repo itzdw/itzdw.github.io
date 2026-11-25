@@ -4,7 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FDE 前置部署工程师 · 建站能力 | ITZDW</title>
-<meta name="description" content="FDE 前置部署工程师（Forward Deployed Engineer）的建站能力展示：需求澄清、原型设计、快速交付、持续迭代，一站式建站服务。">
+<meta name="description" content="周先生 David（FDE 前置部署工程师）的建站能力展示：12 年一线全栈交付，需求澄清、原型设计、快速上线、持续迭代，一站式建站服务。">
+<meta name="keywords" content="FDE,前置部署工程师,建站,周先生,David,itzdw,网站开发,UI设计,Vue.js,全栈工程师">
+<meta property="og:title" content="FDE 前置部署工程师 · 建站能力 | ITZDW">
+<meta property="og:description" content="周先生 David：12 年+ 一线全栈交付，需求现场澄清、方案当场设计、站点当天上线。">
+<meta property="og:url" content="https://itzdw.github.io">
+<meta property="og:type" content="website">
 <style>
   :root {
     --bg: #070b14;
@@ -370,6 +375,56 @@
   .work-meta .cycle { color: var(--accent3); border-color: rgba(167,139,250,.4); background: rgba(167,139,250,.08); }
   .works-note { margin-top: 26px; font-size: 13px; color: var(--text-dim); text-align: center; }
 
+  /* ---------- About & Team ---------- */
+  .about { display: grid; grid-template-columns: 1.15fr .85fr; gap: 22px; margin-top: 48px; }
+  .about-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 28px 30px; backdrop-filter: blur(8px);
+  }
+  .about-card h3 { font-size: 17px; margin-bottom: 14px; }
+  .about-card p { font-size: 14.5px; color: var(--text-dim); }
+  .about-card p + p { margin-top: 10px; }
+  .about-card .hl { color: var(--accent2); font-weight: 600; }
+  .skill-row {
+    display: flex; align-items: baseline; gap: 12px;
+    padding: 11px 0; border-bottom: 1px dashed var(--border); font-size: 14px;
+  }
+  .skill-row:last-child { border-bottom: none; }
+  .skill-row .k { flex: none; width: 64px; color: var(--accent); font-weight: 600; font-size: 13px; }
+  .skill-row .v { color: var(--text-dim); }
+  .team {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 18px; margin-top: 24px;
+  }
+  .member {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 18px; padding: 26px 22px; text-align: center;
+    backdrop-filter: blur(8px);
+    transition: transform .25s ease, border-color .25s ease;
+  }
+  .member:hover { transform: translateY(-5px); border-color: rgba(34,211,238,.5); }
+  .avatar {
+    width: 62px; height: 62px; border-radius: 50%;
+    margin: 0 auto 14px; display: flex; align-items: center; justify-content: center;
+    font-size: 24px; font-weight: 700; color: #fff;
+    background: var(--grad); box-shadow: var(--glow);
+  }
+  .avatar.av-2 { background: linear-gradient(120deg, #0891b2, #22d3ee); }
+  .avatar.av-3 { background: linear-gradient(120deg, #6d28d9, #a78bfa); }
+  .avatar.av-4 { background: linear-gradient(120deg, #1d4ed8, #60a5fa); }
+  .member h3 { font-size: 16px; margin-bottom: 4px; }
+  .member .role { font-size: 12.5px; color: var(--accent2); margin-bottom: 10px; }
+  .member p { font-size: 13px; color: var(--text-dim); }
+  .contact-info { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 24px; }
+  .contact-info span {
+    font-size: 13px; color: var(--text-dim);
+    border: 1px solid var(--border); background: rgba(102,137,191,.06);
+    padding: 8px 16px; border-radius: 999px;
+  }
+  .contact-info a { color: var(--accent2); }
+  .contact-info a:hover { text-decoration: underline; }
+  @media (max-width: 860px) { .about { grid-template-columns: 1fr; } }
+
   /* ---------- Contact ---------- */
   .contact-box {
     margin-top: 44px;
@@ -461,6 +516,7 @@
       <a href="#abilities">建站能力</a>
       <a href="#process">交付流程</a>
       <a href="#stack">技术栈</a>
+      <a href="#about">关于我</a>
       <a href="#works">作品案例</a>
       <a href="#contact">联系</a>
     </div>
@@ -471,10 +527,10 @@
   <div class="wrap">
     <div class="hero">
       <div>
-        <div class="badge"><i class="dot"></i>Forward Deployed Engineer · 前置部署工程师</div>
+        <div class="badge"><i class="dot"></i>周先生 David · Forward Deployed Engineer</div>
         <h1>把想法<span class="grad">最快落地</span><br>成可访问的网站</h1>
         <p class="hero-sub">
-          长期贴近业务一线：需求现场澄清、方案当场设计、站点当天上线。
+          12 年+ 一线全栈交付，华为项目锤炼出来的工程习惯：需求现场澄清、方案当场设计、站点当天上线。
           你正在访问的页面 —— 就是能力本身的证明。
         </p>
         <div class="hero-btns">
@@ -492,8 +548,8 @@
 
     <div class="stats reveal">
       <div class="stat"><b data-count="1" data-suffix="h">0h</b><span>最快上线周期</span></div>
+      <div class="stat"><b data-count="12" data-suffix="年+">0</b><span>一线开发经验</span></div>
       <div class="stat"><b data-count="6">0</b><span>核心建站能力</span></div>
-      <div class="stat"><b data-count="5" data-suffix="步">0步</b><span>从想法到上线</span></div>
       <div class="stat"><b data-count="100" data-suffix="%">0%</b><span>响应式覆盖</span></div>
     </div>
   </div>
@@ -515,7 +571,7 @@
       <div class="card reveal">
         <div class="icon">🎨</div>
         <h3>页面设计与原型还原</h3>
-        <p>响应式布局、移动端适配、视觉风格定制，HTML/CSS 原型当日可看，所见即所得快速对齐预期。</p>
+        <p>Photoshop / Illustrator / Axure 出稿，UI 设计功底加持；响应式布局、移动端适配，HTML/CSS 原型当日可看，所见即所得快速对齐预期。</p>
       </div>
       <div class="card reveal">
         <div class="icon">⚙️</div>
@@ -609,6 +665,63 @@
   </div>
 </section>
 
+<section id="about">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="sec-tag">ABOUT · TEAM</div>
+      <h2>我是谁？谁在背后？</h2>
+      <p class="sec-desc">访问过 itzdw.com 的老朋友都知道：这里不止「周先生一个人」—— 是一支从华为项目走出来的协作小队。</p>
+    </div>
+    <div class="about">
+      <div class="about-card reveal">
+        <h3>My name is David · 周先生</h3>
+        <p>高级前端开发技术总监，12 年+ 一线全栈交付经验。白天写代码，业余爱<span class="hl">计算机与绘画</span> —— 所以做出来的网站，既讲究工程结构，也讲究视觉体面。</p>
+        <p>技能树横跨<span class="hl">设计 → 前端 → 后端 → 数据库 → 部署运维</span>全链路：这正是「FDE 前置部署」的底气 —— 不需要拉一群人对齐，一个人就能把你的想法送上公网。</p>
+        <p>除网站外，也承接 <span class="hl">UI 设计、PS 设计、APP 设计</span>等视觉类工作。</p>
+      </div>
+      <div class="about-card reveal">
+        <h3>全链路能力矩阵</h3>
+        <div class="skill-row"><span class="k">前端</span><span class="v">HTML5 / CSS3 / JavaScript · Vue.js · Bootstrap · 微信小程序</span></div>
+        <div class="skill-row"><span class="k">后端</span><span class="v">Node.js · PHP（Express / Laravel / Django 皆可上手）</span></div>
+        <div class="skill-row"><span class="k">数据库</span><span class="v">MySQL · MongoDB · 建表与查询优化</span></div>
+        <div class="skill-row"><span class="k">运维</span><span class="v">Git · Linux · Nginx / Apache · 域名与 HTTPS</span></div>
+        <div class="skill-row"><span class="k">设计</span><span class="v">Photoshop · Illustrator · Axure RP · UI / UX</span></div>
+      </div>
+    </div>
+    <div class="reveal" style="margin-top:64px;">
+      <div class="sec-tag">TEAM</div>
+      <h2>向团队致敬</h2>
+      <p class="sec-desc">小项目一个人搞定，大项目一个队托底。成员均有华为项目交付经验。</p>
+    </div>
+    <div class="team">
+      <div class="member reveal">
+        <div class="avatar">D</div>
+        <h3>David · 周先生</h3>
+        <div class="role">高级前端开发技术总监</div>
+        <p>擅长 UI 设计与前端开发，FDE 建站服务的主交付人。</p>
+      </div>
+      <div class="member reveal">
+        <div class="avatar av-2">X</div>
+        <h3>xiaoxia</h3>
+        <div class="role">技术总监</div>
+        <p>擅长 C#、Android 与 Java，复杂业务系统的定海神针。</p>
+      </div>
+      <div class="member reveal">
+        <div class="avatar av-3">P</div>
+        <h3>peipei</h3>
+        <div class="role">前端工程师 · 华为项目负责人</div>
+        <p>企业级前端交付经验丰富，节奏把控稳。</p>
+      </div>
+      <div class="member reveal">
+        <div class="avatar av-4">Z</div>
+        <h3>Zery</h3>
+        <div class="role">高级 H5 开发工程师 · 华为总负责人</div>
+        <p>H5 交互与动效专家，大型项目整体交付负责人。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="works">
   <div class="wrap">
     <div class="reveal">
@@ -648,7 +761,7 @@
         </div>
       </a>
     </div>
-    <div class="works-note">💡 每个作品页底部附有「交付复盘」：需求要点、关键设计与交付周期参考，方便你评估自己的项目。</div>
+    <div class="works-note">💡 每个作品页底部附有「交付复盘」：需求要点、关键设计与交付周期参考。另承接 UI 设计 / PS 设计 / APP 设计等视觉类工作，欢迎咨询。</div>
   </div>
 </section>
 
@@ -662,8 +775,14 @@
       <h3>把需求发给我，最快当天上线</h3>
       <p>个人主页、产品官网、活动页、内部工具 —— 一个链接的距离，网站就能开始生长。</p>
       <div class="hero-btns">
-        <a class="btn btn-primary" href="https://www.itzdw.com" target="_blank" rel="noopener">主站 itzdw.com</a>
+        <a class="btn btn-primary" href="mailto:870382225@qq.com">邮件联系 <span>→</span></a>
         <a class="btn btn-ghost" href="https://github.com/itzdw" target="_blank" rel="noopener">GitHub @itzdw</a>
+      </div>
+      <div class="contact-info">
+        <span>邮箱 <a href="mailto:870382225@qq.com">870382225@qq.com</a></span>
+        <span>QQ 870382225</span>
+        <span>微博 @程序员周先生</span>
+        <span>主站 <a href="https://www.itzdw.com" target="_blank" rel="noopener">itzdw.com</a></span>
       </div>
     </div>
   </div>
@@ -675,10 +794,12 @@
       <a href="https://www.itzdw.com" target="_blank" rel="noopener">www.itzdw.com</a>
       <a href="https://github.com/itzdw" target="_blank" rel="noopener">GitHub</a>
       <a href="#abilities">建站能力</a>
+      <a href="#about">关于我</a>
       <a href="#works">作品案例</a>
       <a href="#process">交付流程</a>
     </div>
-    <div>© 2026 ITZDW · FDE 前置部署工程师 · Powered by GitHub Pages</div>
+    <div>© 2014-2026 ITZDW · 周先生 David · FDE 前置部署工程师 · Powered by GitHub Pages</div>
+    <div style="margin-top:8px; font-size:12px; opacity:.65;">主站 itzdw.com（粤ICP备15083223号-2）· 建站 / UI 设计长期可约</div>
   </div>
 </footer>
 
@@ -852,8 +973,8 @@
   }
 
   /* ---------- 技术栈跑马灯 ---------- */
-  var row1 = ['HTML5 / CSS3', 'JavaScript (ES6+)', 'Vue.js', 'Nuxt.js', 'TypeScript', 'Vite / Webpack', '响应式布局', 'CSS 动画'];
-  var row2 = ['Git / GitHub', 'GitHub Pages', 'Nginx 部署', 'SEO 优化', '性能优化', 'Node.js', 'AI 辅助开发', '域名与 HTTPS'];
+  var row1 = ['HTML5 / CSS3', 'JavaScript (ES6+)', 'Vue.js', 'Nuxt.js', 'TypeScript', 'Bootstrap', '微信小程序', '响应式布局', 'CSS 动画'];
+  var row2 = ['Photoshop', 'Illustrator', 'Axure RP', 'UI 设计', 'Node.js', 'PHP', 'MySQL', 'MongoDB', 'Git / Linux', 'Nginx / Apache', 'SEO 优化', 'AI 辅助开发'];
   function fillMq(id, items) {
     var el = document.getElementById(id);
     if (!el) return;
