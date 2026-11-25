@@ -538,6 +538,9 @@ createApp({
       menu.value = a.role==='super' ? 'accounts' : 'basic';
       sessionStorage.setItem('hl_admin_user', a.user);
       claimSession(a); // 登记会话并踢掉其他端
+      if(!syncToken.value){
+        ElementPlus.ElMessage.warning({ message: '未配置同步令牌：跨浏览器/跨设备互踢不会生效（仅同一浏览器的标签页互踢）。请到「同步设置」开启并填入 GitHub 令牌', duration: 6000 });
+      }
       ElementPlus.ElMessage.success('登录成功');
     }
     function logout(){
