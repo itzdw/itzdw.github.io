@@ -114,6 +114,7 @@
           <el-menu-item index="partners"><span>合作伙伴</span></el-menu-item>
           <el-menu-item index="why"><span>为什么选择我们</span></el-menu-item>
           <el-menu-item index="courses"><span>课程管理</span></el-menu-item>
+          <el-menu-item index="msgs"><span>学员留言</span></el-menu-item>
           <el-menu-item index="contact"><span>联系信息</span></el-menu-item>
           <el-menu-item index="export"><span>生成配置文件</span></el-menu-item>
           <el-menu-item index="sync"><span>自动同步设置</span></el-menu-item>
@@ -260,6 +261,26 @@
               <el-table-column label="操作" width="70"><template #default="s"><el-button size="small" type="danger" @click="site.courses.splice(s.$index,1);mark()">删</el-button></template></el-table-column>
             </el-table>
             <div class="hint">点每行的「✏️ 详情」编辑课程详情页内容（副标题 / 详情介绍 / 图集），前台课程卡片点击即进入详情页 course.html?id=课程ID。</div>
+          </div>
+        </template>
+
+        <!-- 学员留言 -->
+        <template v-else-if="menu==='msgs'">
+          <div class="panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+              <h3 class="sub-hd" style="margin:0;border:0;padding:0">学员留言（前台展示 {{ (site.msgs||[]).length }} 条）</h3>
+              <el-button type="primary" size="small" @click="addMsg">+ 新增留言</el-button>
+            </div>
+            <el-form label-width="110px" style="max-width:420px;margin-bottom:16px">
+              <el-form-item label="留言板标题"><el-input v-model="site.msgsTitle" @input="mark" placeholder="学员留言"></el-input></el-form-item>
+            </el-form>
+            <el-table :data="site.msgs||[]" size="small" border>
+              <el-table-column label="称呼" width="120"><template #default="s"><el-input v-model="s.row.name" @input="mark" size="small"></el-input></template></el-table-column>
+              <el-table-column label="留言内容"><template #default="s"><el-input v-model="s.row.text" @input="mark" size="small" type="textarea" :rows="2"></el-input></template></el-table-column>
+              <el-table-column label="时间" width="130"><template #default="s"><el-input v-model="s.row.time" @input="mark" size="small" placeholder="如 2026-11-20"></el-input></template></el-table-column>
+              <el-table-column label="操作" width="70"><template #default="s"><el-button size="small" type="danger" @click="delMsg(s.$index)">删</el-button></template></el-table-column>
+            </el-table>
+            <div class="hint">这里展示的是您挑选/审核后的留言。访客在前台留言板提交的新留言会发送到「联系信息」里配置的 Email 邮箱（经 FormSubmit.co 转发，首次提交后需到邮箱点一次激活邮件）。收到好留言后在这里手动添加即可上墙。</div>
           </div>
         </template>
 
@@ -593,6 +614,16 @@ createApp({
       if(currentSite.value===a.site) currentSite.value=Object.keys(sites)[0];
       mark(); ElementPlus.ElMessage.success('已删除');
     }
+    function addMsg(){
+      if(!site.value.msgs) site.value.msgs = [];
+      site.value.msgs.push({name:'学员', text:'留言内容', time:new Date().toISOString().slice(0,10)});
+      mark();
+    }
+    function delMsg(i){
+      if(!site.value.msgs) return;
+      site.value.msgs.splice(i,1);
+      mark();
+    }
 
     function buildConfigText(){
       const esc = s => JSON.stringify(String(s == null ? '' : s));
@@ -618,6 +649,10 @@ createApp({
         (s.whyItems||[]).forEach(w=> L.push('      { img: '+esc(w.img)+', title: '+esc(w.title)+', desc: '+esc(w.desc)+' },'));
         L.push('    ],');
         L.push('    coursesTitle: '+esc(s.coursesTitle)+',');
+        L.push('    msgsTitle: '+esc(s.msgsTitle)+',');
+        L.push('    msgs: [');
+        (s.msgs||[]).forEach(function(m){ L.push('      { name: '+esc(m.name)+', text: '+esc(m.text)+', time: '+esc(m.time)+' },'); });
+        L.push('    ],');
         L.push('    courses: [');
         (s.courses||[]).forEach(c=> L.push('      { id: '+Number(c.id)+', name: '+esc(c.name)+', price: '+esc(c.price)+', img: '+esc(c.img)+', desc: '+esc(c.desc)+', detail: '+esc(c.detail)+', imgs: '+JSON.stringify(Array.isArray(c.imgs)?c.imgs:[])+' },'));
         L.push('    ],');
@@ -914,7 +949,7 @@ createApp({
       }
       setInterval(tick, 10000); // 每10秒自动保存 + 条件同步
     });
-    return { logged,account,login,sites,accounts,currentSite,menu,dirty,code,accountDialog,newAccount,courseDialog,courseEdit,isSuper,site,imgOptions,draftTime,syncEnabled,syncToken,syncRepo,syncBranch,syncPath,syncMsg,syncOk,hintShown,logoCount,logoClick,thumbSrc,thumbErr,dlgSrc,dlgErr,dlgImgErr,dlgBust,dlgImgTries,mark,doLogin,logout,onMenu,switchSite,addBanner,addCourse,pickUpload,openCourseDetail,pickCourseImg,openAccount,saveAccount,delAccount,generate,copyCode,download,saveSyncSettings,onSyncToggle,syncNow };
+    return { logged,account,login,sites,accounts,currentSite,menu,dirty,code,accountDialog,newAccount,courseDialog,courseEdit,isSuper,site,imgOptions,draftTime,syncEnabled,syncToken,syncRepo,syncBranch,syncPath,syncMsg,syncOk,hintShown,logoCount,logoClick,thumbSrc,thumbErr,dlgSrc,dlgErr,dlgImgErr,dlgBust,dlgImgTries,mark,doLogin,logout,onMenu,switchSite,addBanner,addCourse,addMsg,delMsg,pickUpload,openCourseDetail,pickCourseImg,openAccount,saveAccount,delAccount,generate,copyCode,download,saveSyncSettings,onSyncToggle,syncNow };
   }
 }).use(ElementPlus).mount('#app');
 </script>
