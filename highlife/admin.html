@@ -116,14 +116,17 @@
             <el-form label-width="110px">
               <el-form-item label="站点名称"><el-input v-model="site.name" @input="mark"></el-input></el-form-item>
               <el-form-item label="Logo 图片">
-                <el-select v-model="site.logo" @change="mark" style="width:100%">
-                  <el-option v-for="o in imgOptions" :key="o.v" :label="o.l" :value="o.v"></el-option>
-                </el-select>
+                <div style="display:flex;gap:8px">
+                  <el-select v-model="site.logo" @change="mark" style="flex:1">
+                    <el-option v-for="o in imgOptions" :key="o.v" :label="o.l" :value="o.v"></el-option>
+                  </el-select>
+                  <el-button size="small" @click="pickUpload(site,'logo')">⬆ 上传</el-button>
+                </div>
               </el-form-item>
               <el-form-item label="Logo 预览"><img :src="site.logo" style="height:44px;max-width:160px;object-fit:contain;border:1px solid #eee;border-radius:4px"></el-form-item>
               <el-form-item label="页脚文字"><el-input v-model="site.footer" @input="mark"></el-input></el-form-item>
             </el-form>
-            <div class="hint">如需使用自己的图片，把图片文件放入 images/ 目录，然后在图片下拉框选择（或直接在生成的配置文件里改路径）。</div>
+            <div class="hint">图片可以直接点各图片选择框旁的「⬆ 上传」按钮上传本机图片（需在「自动同步设置」配置 GitHub 令牌，上传后约 1 分钟前台生效）；也可以把图片文件放入 images/ 目录后在下拉框选择。</div>
           </div>
         </template>
 
@@ -138,6 +141,7 @@
               <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
                 <img :src="b.img" style="width:90px;height:60px;object-fit:cover;border-radius:4px">
                 <el-select v-model="b.img" @change="mark" style="width:200px"><el-option v-for="o in imgOptions" :key="o.v" :label="o.l" :value="o.v"></el-option></el-select>
+                <el-button size="small" @click="pickUpload(b,'img')">⬆ 上传</el-button>
                 <el-input v-model="b.title" @input="mark" placeholder="主标题" style="width:170px"></el-input>
                 <el-input v-model="b.sub" @input="mark" placeholder="副标题" style="width:170px"></el-input>
                 <el-button size="small" type="danger" @click="site.banners.splice(i,1);mark()">删除</el-button>
@@ -154,7 +158,7 @@
               <el-form-item label="人气课程标题"><el-input v-model="site.hotTitle" @input="mark"></el-input></el-form-item>
               <el-form-item label="高品质-引导语"><el-input v-model="site.highLead" @input="mark"></el-input></el-form-item>
               <el-form-item label="高品质课程标题"><el-input v-model="site.highTitle" @input="mark"></el-input></el-form-item>
-              <el-form-item label="高品质课程图片"><el-select v-model="site.highPic" @change="mark" style="width:100%"><el-option v-for="o in imgOptions" :key="o.v" :label="o.l" :value="o.v"></el-option></el-select></el-form-item>
+              <el-form-item label="高品质课程图片"><div style="display:flex;gap:8px;width:100%"><el-select v-model="site.highPic" @change="mark" style="flex:1"><el-option v-for="o in imgOptions" :key="o.v" :label="o.l" :value="o.v"></el-option></el-select><el-button size="small" @click="pickUpload(site,'highPic')">⬆ 上传</el-button></div></el-form-item>
               <el-form-item label="合作伙伴标题"><el-input v-model="site.partnerTitle" @input="mark"></el-input></el-form-item>
               <el-form-item label="Why choose us 标题"><el-input v-model="site.whyTitle" @input="mark"></el-input></el-form-item>
               <el-form-item label="Why choose us 副标题"><el-input v-model="site.whySub" @input="mark"></el-input></el-form-item>
@@ -173,6 +177,7 @@
             <div v-for="(p,i) in site.partners" :key="i" style="display:flex;gap:12px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
               <img :src="p.img" class="thumb">
               <el-select v-model="p.img" @change="mark" style="width:180px"><el-option v-for="o in imgOptions" :key="o.v" :label="o.l" :value="o.v"></el-option></el-select>
+              <el-button size="small" @click="pickUpload(p,'img')">⬆ 上传</el-button>
               <el-input v-model="p.name" @input="mark" placeholder="名称" style="width:220px"></el-input>
               <el-button size="small" type="danger" @click="site.partners.splice(i,1);mark()">删除</el-button>
             </div>
@@ -190,6 +195,7 @@
               <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
                 <img :src="w.img" class="thumb">
                 <el-select v-model="w.img" @change="mark" style="width:160px"><el-option v-for="o in imgOptions" :key="o.v" :label="o.l" :value="o.v"></el-option></el-select>
+                <el-button size="small" @click="pickUpload(w,'img')">⬆ 上传</el-button>
                 <el-input v-model="w.title" @input="mark" placeholder="标题" style="width:200px"></el-input>
                 <el-button size="small" type="danger" @click="site.whyItems.splice(i,1);mark()">删除</el-button>
               </div>
@@ -209,7 +215,7 @@
               <el-table-column label="封面" width="70"><template #default="s"><img class="thumb" :src="s.row.img"></template></el-table-column>
               <el-table-column label="课程名称" show-overflow-tooltip><template #default="s"><el-input v-model="s.row.name" @input="mark" size="small"></el-input></template></el-table-column>
               <el-table-column label="价格" width="120"><template #default="s"><el-input v-model="s.row.price" @input="mark" size="small"></el-input></template></el-table-column>
-              <el-table-column label="封面图" width="160"><template #default="s"><el-select v-model="s.row.img" @change="mark" size="small"><el-option v-for="o in imgOptions" :key="o.v" :label="o.l" :value="o.v"></el-option></el-select></template></el-table-column>
+              <el-table-column label="封面图" width="200"><template #default="s"><div style="display:flex;gap:6px"><el-select v-model="s.row.img" @change="mark" size="small" style="flex:1"><el-option v-for="o in imgOptions" :key="o.v" :label="o.l" :value="o.v"></el-option></el-select><el-button size="small" @click="pickUpload(s.row,'img')">⬆</el-button></div></template></el-table-column>
               <el-table-column label="操作" width="70"><template #default="s"><el-button size="small" type="danger" @click="site.courses.splice(s.$index,1);mark()">删</el-button></template></el-table-column>
             </el-table>
           </div>
@@ -345,7 +351,7 @@ createApp({
     const isSuper = computed(()=> account.value.role === 'super');
     const site = computed(()=> sites[currentSite.value] || {});
 
-    const imgOptions = [];
+    const imgOptions = reactive([]);
     for(let i=1;i<=51;i++){
       const ext = [2,14,17,18,20,21,22,23,32,33,34,35,36,37,38,39,42,43,44,45,46,47,48,49,50,51].includes(i) ? 'png' : 'jpg';
       imgOptions.push({v:'images/img_'+String(i).padStart(3,'0')+'.'+ext, l:'图片 '+String(i).padStart(3,'0')});
@@ -372,6 +378,58 @@ createApp({
     function switchSite(sid){ if(sites[sid]){ currentSite.value=sid; menu.value='basic'; ElementPlus.ElMessage.success('已切换到 '+sid); } }
     function addBanner(){ site.value.banners.push({img:imgOptions[0].v,title:'',sub:''}); mark(); }
     function addCourse(){ site.value.courses.push({id:Date.now(),name:'',price:'',img:imgOptions[0].v}); mark(); }
+
+    // ---------- 图片上传（GitHub Contents API，需在「自动同步设置」配置令牌） ----------
+    function fileToB64(file){ return new Promise(res=>{ const fr=new FileReader(); fr.onload=()=>res(String(fr.result).split(',')[1]); fr.onerror=()=>res(''); fr.readAsDataURL(file); }); }
+    async function uploadImageFile(file){
+      if(!syncToken.value){ ElementPlus.ElMessage.warning('请先在「自动同步设置」填写 GitHub 令牌（需 Contents 读写权限）'); return ''; }
+      if(!syncRepo.value || syncRepo.value.indexOf('/')<0){ ElementPlus.ElMessage.warning('请先在「自动同步设置」填写仓库（owner/repo）'); return ''; }
+      const branch = syncBranch.value||'master';
+      let content;
+      if(file.size > 800*1024){
+        // 大图压缩到 1280px 内再传（Contents API 对大文件不友好）
+        const dataUrl = await new Promise(res=>{
+          const img=new Image(); const u=URL.createObjectURL(file);
+          img.onload=()=>{ const s=Math.min(1,1280/Math.max(img.width,img.height));
+            const c=document.createElement('canvas'); c.width=Math.round(img.width*s); c.height=Math.round(img.height*s);
+            c.getContext('2d').drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(u);
+            res(c.toDataURL('image/jpeg',0.85)); };
+          img.onerror=()=>{ URL.revokeObjectURL(u); res(''); }; img.src=u;
+        });
+        content = dataUrl ? dataUrl.split(',')[1] : await fileToB64(file);
+      } else {
+        content = await fileToB64(file);
+      }
+      if(!content){ ElementPlus.ElMessage.error('读取图片失败'); return ''; }
+      const safe = (file.name||'img').replace(/[^\w.-]+/g,'-').replace(/^-+|-+$/g,'')||'img';
+      const path = 'highlife/images/upload/'+Date.now()+'-'+safe;
+      const headers = {'Authorization':'Bearer '+syncToken.value,'Accept':'application/vnd.github+json','Content-Type':'application/json'};
+      try{
+        const r = await fetch('https://api.github.com/repos/'+syncRepo.value+'/contents/'+path,
+          {method:'PUT', headers, body:JSON.stringify({message:'upload image', content, branch})});
+        if(!r.ok){ const j=await r.json().catch(()=>({}));
+          const m=String(j.message||('HTTP '+r.status));
+          ElementPlus.ElMessage.error(m.indexOf('Bad credentials')>=0?'上传失败：令牌无效'
+            :m.indexOf('Resource not accessible')>=0?'上传失败：令牌需 Contents 读写权限'
+            :'上传失败：'+m.slice(0,60));
+          return ''; }
+      }catch(e){ ElementPlus.ElMessage.error('上传失败：'+String(e.message||e).slice(0,60)); return ''; }
+      const owner=syncRepo.value.split('/')[0], nm=syncRepo.value.split('/')[1];
+      const base = nm===owner+'.github.io' ? 'https://'+owner+'.github.io' : 'https://'+owner+'.github.io/'+nm;
+      return base+'/'+path;
+    }
+    function pickUpload(target, key){
+      const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+      inp.onchange=async()=>{
+        const f=inp.files&&inp.files[0]; if(!f) return;
+        if(!/^image\//.test(f.type)){ ElementPlus.ElMessage.warning('请选择图片文件'); return; }
+        const url=await uploadImageFile(f); if(!url) return;
+        imgOptions.unshift({v:url, l:'⬆ '+f.name.slice(0,16)});
+        target[key]=url; mark();
+        ElementPlus.ElMessage.success('上传成功，约 1 分钟后前台生效（Pages 构建）');
+      };
+      inp.click();
+    }
 
     function openAccount(){ newAccount.value={user:'',pwd:'',name:'',site:''}; accountDialog.value=true; }
     function saveAccount(){
@@ -566,7 +624,7 @@ createApp({
       }
       setInterval(tick, 10000); // 每10秒自动保存 + 条件同步
     });
-    return { logged,account,login,sites,accounts,currentSite,menu,dirty,code,accountDialog,newAccount,isSuper,site,imgOptions,draftTime,syncEnabled,syncToken,syncRepo,syncBranch,syncPath,syncMsg,syncOk,mark,doLogin,logout,onMenu,switchSite,addBanner,addCourse,openAccount,saveAccount,delAccount,generate,copyCode,download,saveSyncSettings,onSyncToggle,syncNow };
+    return { logged,account,login,sites,accounts,currentSite,menu,dirty,code,accountDialog,newAccount,isSuper,site,imgOptions,draftTime,syncEnabled,syncToken,syncRepo,syncBranch,syncPath,syncMsg,syncOk,mark,doLogin,logout,onMenu,switchSite,addBanner,addCourse,pickUpload,openAccount,saveAccount,delAccount,generate,copyCode,download,saveSyncSettings,onSyncToggle,syncNow };
   }
 }).use(ElementPlus).mount('#app');
 </script>
