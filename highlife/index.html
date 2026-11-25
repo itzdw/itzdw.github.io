@@ -2,8 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="applicable-device" content="mobile">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>highlife-culture</title>
 <link rel="stylesheet" href="css/site.css">
 </head>
@@ -13,6 +12,15 @@
   <header class="topbar" id="topbar">
     <div class="searchbox"><span class="search-ico"></span><span class="search-ph">关键词</span></div>
     <div class="brand-logo"><img id="logoImg" src="images/img_001.jpg" alt="" data-hl-kind="img" data-hl-path="logo" data-hl-label="网站Logo"></div>
+    <nav class="pc-nav">
+      <a href="#topbar">首页</a>
+      <a href="#hot">人气课程</a>
+      <a href="#partners">合作伙伴</a>
+      <a href="#about">关于我们</a>
+      <a href="#courses">我们的课程</a>
+      <a href="#contact">联系我们</a>
+      <a href="admin.html">后台管理</a>
+    </nav>
   </header>
 
   <section class="banner" id="banner">
@@ -59,11 +67,13 @@
   </section>
 
   <section class="contact" id="contact">
-    <p id="contactIntro" data-hl-kind="text" data-hl-path="contact.intro" data-hl-label="联系引言"></p>
-    <p id="contactEmail" data-hl-kind="text" data-hl-path="contact.email" data-hl-label="Email"></p>
-    <p id="contactTel" data-hl-kind="text" data-hl-path="contact.tel" data-hl-label="电话"></p>
-    <p class="addr" id="contactAddr" data-hl-kind="text" data-hl-path="contact.addr" data-hl-label="地址"></p>
-    <p class="cbrand" id="contactBrand" data-hl-kind="text" data-hl-path="contact.brand" data-hl-label="品牌名"></p>
+    <div class="cinfo">
+      <p id="contactIntro" data-hl-kind="text" data-hl-path="contact.intro" data-hl-label="联系引言"></p>
+      <p id="contactEmail" data-hl-kind="text" data-hl-path="contact.email" data-hl-label="Email"></p>
+      <p id="contactTel" data-hl-kind="text" data-hl-path="contact.tel" data-hl-label="电话"></p>
+      <p class="addr" id="contactAddr" data-hl-kind="text" data-hl-path="contact.addr" data-hl-label="地址"></p>
+      <p class="cbrand" id="contactBrand" data-hl-kind="text" data-hl-path="contact.brand" data-hl-label="品牌名"></p>
+    </div>
     <div class="cform">
       <label id="formLabel" data-hl-kind="text" data-hl-path="contact.formLabel" data-hl-label="表单提示语"></label>
       <input type="text" placeholder="Email：">
