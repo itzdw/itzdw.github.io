@@ -39,15 +39,39 @@
   }
   /* 移动端兼容（≤640px） */
   @media (max-width:640px){
-    .login-card{width:92%;max-width:380px;box-sizing:border-box}
-    .dash-header{padding:0 12px;flex-wrap:wrap;height:auto;min-height:56px;padding-top:8px;padding-bottom:8px}
-    .dash-header .brand{font-size:15px}
+    .login-page{padding:16px;box-sizing:border-box}
+    .login-card{width:100%;max-width:380px;box-sizing:border-box;padding:26px 20px}
+    .dash-header{padding:8px 12px;flex-wrap:wrap;height:auto;min-height:56px;row-gap:6px}
+    .dash-header .brand{font-size:14px;line-height:1.4}
+    .dash-header .badge{margin-left:4px}
+    .dash-header>div{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px}
+    .dash-header>div>span{font-size:12px}
+    .dash-header .site-link{margin:0 !important}
     .dash-body{flex-direction:column}
-    .side{width:100%;border-right:none;border-bottom:1px solid #eef0f2;padding-top:4px;max-height:220px}
-    .side .el-menu{border-right:none}
+    /* 侧栏菜单改为横向换行平铺，不再纵向滚动 */
+    .side{width:100%;border-right:none;border-bottom:1px solid #eef0f2;padding:6px;max-height:none;overflow:visible}
+    .side .el-menu{border-right:none;display:flex;flex-wrap:wrap;padding:2px 0}
+    .side .el-menu-item{width:auto !important;height:34px;line-height:34px;padding:0 12px;margin:2px 4px 2px 0;border-radius:16px;background:#f5f7f9}
+    .side .el-menu-item.is-active{background:#e2eff5;color:#469bb7;font-weight:600}
     .main{padding:12px 10px}
     .panel{max-width:100% !important;padding:14px 12px}
-    .code-area{height:260px}
+    /* 表单标签改为顶部排列，输入框占满整行 */
+    .panel .el-form-item,
+    .el-dialog .el-form-item{display:block}
+    .panel .el-form-item__label,
+    .el-dialog .el-form-item__label{width:100% !important;justify-content:flex-start;margin-bottom:4px;line-height:1.5}
+    /* 定宽内联输入框改为自适应满行 */
+    .panel .el-input{width:100% !important}
+    .el-dialog .el-input{width:100% !important}
+    /* 弹窗不超屏 */
+    .el-dialog{width:92% !important;max-width:92vw !important;margin-top:6vh !important}
+    .el-dialog__body{padding:14px 16px;max-height:62vh;overflow:auto}
+    /* 表格窄屏横向滚动 + 字号紧凑 */
+    .main .el-table{font-size:12px}
+    .el-table .cell{padding:0 6px}
+    .el-table .thumb{width:36px;height:36px}
+    .code-area{height:240px;font-size:11px}
+    .notice{font-size:12px;padding:10px 12px}
   }
 </style>
 </head>
