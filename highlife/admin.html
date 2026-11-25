@@ -412,7 +412,7 @@
 
 <script src="vendor/vue.global.prod.js"></script>
 <script src="vendor/element-plus.full.min.js"></script>
-<script src="js/site-config.js"></script>
+<script>document.write('<script src="js/site-config.js?v=' + Date.now() + '"><\/script>');</script>
 <script>
 const { createApp, ref, reactive, computed, onMounted } = Vue;
 createApp({
