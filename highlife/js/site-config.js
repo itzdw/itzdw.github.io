@@ -15,7 +15,7 @@ window.HIGHLIFE_SITES = {
       { img: "images/img_010.jpg", title: "蜡烛艺术", sub: "JCA 认证课程体系" },
     ],
     hotTitle: "人气课程", highLead: "HIGH LIFE只提供", highTitle: "高品质课程", highPic: "images/img_009.jpg",
-    aboutImg: "images/img_019.jpg", aboutLead: "通过与国外优秀手作培训平台的合作，实现国际技术交流。", aboutTitle: "国际化 · 专业化 · 平台化",
+    aboutImg: "", aboutLead: "", aboutTitle: "",
     partnerTitle: "我们重要合作伙伴",
     partners: [
       { img: "images/img_011.jpg", name: "JCA日本蜡烛协会" },
@@ -49,7 +49,7 @@ window.HIGHLIFE_SITES = {
       { id: 13, name: "蜜蜡花专题课程", price: "￥4800", img: "images/img_030.jpg", desc: "", detail: "", imgs: [] },
       { id: 14, name: "AROMATICA LABO洗发饼认证课程", price: "￥2280", img: "images/img_031.jpg", desc: "", detail: "", imgs: [] },
     ],
-    contact: { intro: "关于课程咨询和报名，欢迎联系我们。", email: "Email：itzdw@qq.com", tel: "Tel : 13414466970", addr: "Tianjin Binhai New Area Zhongxin Ecological City Shimao Jiuxi 3402", brand: "HIGH LIFE_culture", formLabel: "在线表单提交" },
+    contact: { intro: "关于课程咨询和报名，欢迎联系我们。", email: "Email：bella_highlife@qq.com", tel: "Tel : 13414466970", addr: "Tianjin Binhai New Area Zhongxin Ecological City Shimao Jiuxi 3402", brand: "HIGH LIFE_culture", formLabel: "在线表单提交" },
     footer: "Copyright @ 2024. HIGH LIFE"
   },
 };
