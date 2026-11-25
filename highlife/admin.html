@@ -29,6 +29,26 @@
   .hint{font-size:12px;color:#999;margin-top:8px;line-height:1.7}
   .thumb{width:44px;height:44px;object-fit:cover;border-radius:4px}
   .site-link{font-size:12px;color:#469bb7}
+  /* PC 大屏优化 */
+  @media (min-width:1200px){
+    .panel{max-width:860px !important}
+    .main{padding:24px 32px}
+  }
+  @media (min-width:768px) and (max-width:1199px){
+    .panel{max-width:100% !important}
+  }
+  /* 移动端兼容（≤640px） */
+  @media (max-width:640px){
+    .login-card{width:92%;max-width:380px;box-sizing:border-box}
+    .dash-header{padding:0 12px;flex-wrap:wrap;height:auto;min-height:56px;padding-top:8px;padding-bottom:8px}
+    .dash-header .brand{font-size:15px}
+    .dash-body{flex-direction:column}
+    .side{width:100%;border-right:none;border-bottom:1px solid #eef0f2;padding-top:4px;max-height:220px}
+    .side .el-menu{border-right:none}
+    .main{padding:12px 10px}
+    .panel{max-width:100% !important;padding:14px 12px}
+    .code-area{height:260px}
+  }
 </style>
 </head>
 <body>
