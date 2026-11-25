@@ -332,36 +332,16 @@
     display: flex; align-items: flex-end; justify-content: center;
     padding: 0 26px;
   }
-  .shot::before {
-    content: ""; position: absolute; inset: 0;
-    background:
-      radial-gradient(220px 120px at 70% 20%, rgba(255,255,255,.14), transparent),
-      radial-gradient(180px 110px at 20% 70%, rgba(255,255,255,.1), transparent);
-  }
-  .shot-1 { background: linear-gradient(140deg, #0f2744, #1e3a8a 60%, #4f46e5); }
-  .shot-2 { background: linear-gradient(140deg, #06202b, #0e7490 55%, #155e75); }
-  .shot-3 { background: linear-gradient(140deg, #2a1245, #7c3aed 55%, #db2777); }
-  .mini-browser {
+  .shot img {
     position: relative; z-index: 1;
-    width: 100%; margin-bottom: -6px;
-    background: rgba(10, 14, 26, .92);
-    border: 1px solid rgba(255,255,255,.14);
-    border-bottom: none;
-    border-radius: 12px 12px 0 0;
-    padding: 10px 14px 14px;
-    box-shadow: 0 12px 34px rgba(0,0,0,.5);
-    transition: transform .3s ease;
+    display: block; width: 100%; height: 100%;
+    object-fit: cover; object-position: top center;
+    transition: transform .35s ease;
   }
-  .work:hover .mini-browser { transform: translateY(-10px); }
-  .mini-dots { display: flex; gap: 5px; margin-bottom: 10px; }
-  .mini-dots i { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.25); }
-  .mini-bar { height: 8px; border-radius: 4px; background: rgba(255,255,255,.22); margin-bottom: 7px; }
-  .mini-bar.w60 { width: 60%; }
-  .mini-bar.w85 { width: 85%; }
-  .mini-bar.w45 { width: 45%; }
-  .mini-row { display: flex; gap: 7px; margin-top: 10px; }
-  .mini-box { flex: 1; height: 34px; border-radius: 6px; background: rgba(255,255,255,.12); }
-  .mini-box.hl { background: rgba(255,255,255,.28); }
+  .work:hover .shot img { transform: translateY(-8px) scale(1.03); }
+  .shot-1 { background: #0f2744; }
+  .shot-2 { background: #06202b; }
+  .shot-3 { background: #2a1245; }
   .work-body { padding: 22px 24px 24px; }
   .work-body h3 { font-size: 17px; margin-bottom: 6px; }
   .work-body p { font-size: 13.5px; color: var(--text-dim); margin-bottom: 14px; }
@@ -617,17 +597,12 @@
     <div class="reveal">
       <div class="sec-tag">PORTFOLIO</div>
       <h2>作品案例</h2>
-      <p class="sec-desc">三个不同场景的完整演示作品（客户与数据均为虚构），点开即可体验 —— 每一个都对应一种真实建站需求。</p>
+      <p class="sec-desc">三个可在线访问的完整作品，覆盖三种典型建站场景 —— 点开即可浏览，每个都真实可交互。</p>
     </div>
     <div class="works">
       <a class="work reveal" href="works/cloudpivot-corp.html">
         <div class="shot shot-1">
-          <div class="mini-browser">
-            <div class="mini-dots"><i></i><i></i><i></i></div>
-            <div class="mini-bar w60"></div>
-            <div class="mini-bar w85"></div>
-            <div class="mini-row"><div class="mini-box hl"></div><div class="mini-box"></div><div class="mini-box"></div></div>
-          </div>
+          <img src="works/assets/shot-corp.webp" alt="云枢科技企业官网页面截图" loading="lazy">
         </div>
         <div class="work-body">
           <h3>云枢科技 · 企业官网</h3>
@@ -637,12 +612,7 @@
       </a>
       <a class="work reveal" href="works/smart-factory-dashboard.html">
         <div class="shot shot-2">
-          <div class="mini-browser">
-            <div class="mini-dots"><i></i><i></i><i></i></div>
-            <div class="mini-bar w45"></div>
-            <div class="mini-row"><div class="mini-box hl"></div><div class="mini-box"></div></div>
-            <div class="mini-row"><div class="mini-box"></div><div class="mini-box hl"></div></div>
-          </div>
+          <img src="works/assets/shot-dashboard.webp" alt="智造云生产运营监控大屏截图" loading="lazy">
         </div>
         <div class="work-body">
           <h3>智造云 · 生产运营监控大屏</h3>
@@ -652,11 +622,7 @@
       </a>
       <a class="work reveal" href="works/starvoyage-event.html">
         <div class="shot shot-3">
-          <div class="mini-browser">
-            <div class="mini-dots"><i></i><i></i><i></i></div>
-            <div class="mini-bar w60"></div>
-            <div class="mini-row"><div class="mini-box hl"></div><div class="mini-box"></div><div class="mini-box hl"></div></div>
-          </div>
+          <img src="works/assets/shot-event.webp" alt="星航 AI 产品发布会落地页截图" loading="lazy">
         </div>
         <div class="work-body">
           <h3>星航 AI · 产品发布会落地页</h3>
@@ -665,7 +631,7 @@
         </div>
       </a>
     </div>
-    <div class="works-note">💡 每个作品页底部附有「交付复盘」：真实项目中的需求要点、关键设计与交付周期。</div>
+    <div class="works-note">💡 每个作品页底部附有「交付复盘」：需求要点、关键设计与交付周期参考，方便你评估自己的项目。</div>
   </div>
 </section>
 
