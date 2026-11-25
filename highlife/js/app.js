@@ -64,7 +64,7 @@
     Array.prototype.forEach.call(dots.children, function (d, i) { d.className = i === idx ? 'on' : ''; });
   }
 
-  var SEC_KEYS = { banner: 'banner', hot: 'hot', high: 'high', partners: 'partners', about: 'about', why: 'whySec', courses: 'courses', msgs: 'msgs', contact: 'contact', footer: 'footerText' };
+  var SEC_KEYS = { banner: 'banner', hot: 'hot', high: 'high', partners: 'partners', about: 'about', why: 'whySec', courses: 'courses', contact: 'contact', footer: 'footerText' };
 
   function renderAll(S) {
     src('logoImg', S.logo);
@@ -79,7 +79,6 @@
     txt('whyTitle', S.whyTitle);
     txt('whySub', S.whySub);
     txt('coursesTitle', S.coursesTitle);
-    txt('msgsTitle', S.msgsTitle);
 
     var c = S.contact || {};
     txt('contactIntro', c.intro);
@@ -105,28 +104,6 @@
     var courses = Array.isArray(S.courses) ? S.courses : [];
     if (hot) { hot.innerHTML = ''; courses.slice(0, 6).forEach(function (x, i) { hot.appendChild(card(x, i)); }); }
     if (allBox) { allBox.innerHTML = ''; courses.forEach(function (x, i) { allBox.appendChild(card(x, i)); }); }
-
-    // 留言板（展示站长精选/审核后的留言）
-    var msgList = document.getElementById('msgList');
-    if (msgList) {
-      msgList.innerHTML = '';
-      (S.msgs || []).forEach(function (m, i) {
-        var d = document.createElement('div'); d.className = 'msg-item';
-        d.setAttribute('data-hl-kind', 'item');
-        d.setAttribute('data-hl-list', 'msgs');
-        d.setAttribute('data-hl-idx', i);
-        d.setAttribute('data-hl-label', '留言');
-        var hd = document.createElement('div'); hd.className = 'msg-hd';
-        var nm = document.createElement('span'); nm.className = 'msg-name'; nm.textContent = m.name || '匿名学员';
-        attr(nm, 'text', 'msgs.' + i + '.name', '留言人');
-        var tm = document.createElement('span'); tm.className = 'msg-time'; tm.textContent = m.time || '';
-        attr(tm, 'text', 'msgs.' + i + '.time', '留言时间');
-        hd.appendChild(nm); hd.appendChild(tm);
-        var tx = document.createElement('p'); tx.className = 'msg-text'; tx.textContent = m.text || '';
-        attr(tx, 'text', 'msgs.' + i + '.text', '留言内容');
-        d.appendChild(hd); d.appendChild(tx); msgList.appendChild(d);
-      });
-    }
 
     // 合作伙伴
     var pg = document.getElementById('partnerGrid');
@@ -274,23 +251,6 @@
       留言: ((msgT && msgT.value) || '').trim() || '（无留言，仅留下联系方式）'
     }, tip, '提交成功，我们会尽快联系您！');
     if (mailI) mailI.value = ''; if (msgT) msgT.value = '';
-  });
-
-  // 留言板表单（称呼 + 留言）
-  var msgBtn = document.getElementById('msgSubmit');
-  if (msgBtn) msgBtn.addEventListener('click', function () {
-    if (document.body.classList.contains('hl-editing')) return;
-    var nameI = document.getElementById('msgName');
-    var textT = document.getElementById('msgText');
-    var tip = document.getElementById('msgTip');
-    var v = ((textT && textT.value) || '').trim();
-    if (!v) { tip.textContent = '请填写留言内容'; return; }
-    sendToOwner({
-      _subject: '【官网留言板】' + (S.name || ''),
-      称呼: ((nameI && nameI.value) || '').trim() || '匿名',
-      留言: v
-    }, tip, '留言已提交，感谢您的反馈！');
-    if (textT) textT.value = '';
   });
 
   // 菜单（编辑模式下不触发）
