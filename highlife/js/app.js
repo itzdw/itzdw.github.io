@@ -227,4 +227,54 @@
   if (xlink) xlink.addEventListener('click', function (e) { e.preventDefault(); closeMenu(); });
   var logo = document.querySelector('.brand-logo');
   if (logo) logo.addEventListener('dblclick', openMenu);
+
+  // 搜索课程：输入关键词过滤，点击结果进详情页，回车去第一条/课程区
+  var sInput = document.getElementById('searchInput');
+  var sBox = document.getElementById('searchResults');
+  if (sInput && sBox) {
+    var sTimer = null;
+    function renderResults(q) {
+      var kw = (q || '').trim().toLowerCase();
+      if (!kw) { sBox.style.display = 'none'; sBox.innerHTML = ''; return; }
+      var courses = Array.isArray(S.courses) ? S.courses : [];
+      var hits = [];
+      courses.forEach(function (x, i) {
+        var name = (x.name || '').toLowerCase();
+        var price = (x.price || '').toLowerCase();
+        if (name.indexOf(kw) >= 0 || price.indexOf(kw) >= 0) hits.push({ item: x, idx: i });
+      });
+      sBox.innerHTML = '';
+      if (!hits.length) {
+        var e = document.createElement('div');
+        e.className = 's-empty';
+        e.textContent = '没有找到「' + q.trim() + '」相关的课程';
+        sBox.appendChild(e);
+      } else {
+        hits.slice(0, 8).forEach(function (h) {
+          var a = document.createElement('a');
+          a.href = 'course.html?t=' + encodeURIComponent(siteId) + '&id=' + encodeURIComponent(h.item.id != null ? h.item.id : h.idx);
+          var n = document.createElement('span'); n.textContent = h.item.name || '';
+          var p = document.createElement('span'); p.className = 's-price'; p.textContent = h.item.price || '';
+          a.appendChild(n); a.appendChild(p);
+          sBox.appendChild(a);
+        });
+      }
+      sBox.style.display = 'block';
+    }
+    sInput.addEventListener('input', function () {
+      clearTimeout(sTimer);
+      sTimer = setTimeout(function () { renderResults(sInput.value); }, 120);
+    });
+    sInput.addEventListener('focus', function () { if (sInput.value.trim()) renderResults(sInput.value); });
+    sInput.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter') {
+        var first = sBox.querySelector('a');
+        if (first) location.href = first.href;
+        else if (sInput.value.trim()) { var c = document.getElementById('courses'); if (c) c.scrollIntoView({ behavior: 'smooth' }); }
+      } else if (ev.key === 'Escape') { sBox.style.display = 'none'; }
+    });
+    document.addEventListener('click', function (ev) {
+      if (ev.target !== sInput && !sBox.contains(ev.target)) sBox.style.display = 'none';
+    });
+  }
 })();
