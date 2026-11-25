@@ -27,7 +27,6 @@
     { key: 'about',    el: 'about',     label: '关于我们' },
     { key: 'why',      el: 'whySec',    label: 'Why choose us' },
     { key: 'courses',  el: 'courses',   label: '我们的课程' },
-    { key: 'msgs',     el: 'msgs',      label: '学员留言' },
     { key: 'contact',  el: 'contact',   label: '联系报名' },
     { key: 'footer',   el: 'footerText', label: '页脚' }
   ];
@@ -40,11 +39,9 @@
     partners: { label: '合作伙伴', add: { img: IMG_OPTIONS[10], name: '新伙伴' },
                 fields: [{ k: 'name', type: 'text', l: '名称' }, { k: 'img', type: 'img', l: 'Logo图片' }] },
     whyItems: { label: '优势条目', add: { img: IMG_OPTIONS[19], title: '新优势', desc: '优势描述' },
-                fields: [{ k: 'title', type: 'text', l: '标题' }, { k: 'desc', type: 'textarea', l: '描述' }, { k: 'img', type: 'img', l: '图标' }] },
-    msgs:     { label: '留言',     add: { name: '学员', text: '留言内容', time: '' },
-                fields: [{ k: 'name', type: 'text', l: '称呼' }, { k: 'text', type: 'textarea', l: '留言内容' }, { k: 'time', type: 'text', l: '时间（如 2026-11-20）' }] }
+                fields: [{ k: 'title', type: 'text', l: '标题' }, { k: 'desc', type: 'textarea', l: '描述' }, { k: 'img', type: 'img', l: '图标' }] }
   };
-  var LIST_CONTAINERS = { banners: 'bannerTrack', courses: 'allCourses', partners: 'partnerGrid', whyItems: 'whyList', msgs: 'msgList' };
+  var LIST_CONTAINERS = { banners: 'bannerTrack', courses: 'allCourses', partners: 'partnerGrid', whyItems: 'whyList' };
 
   var editing = false;
   var undoStack = [];
@@ -558,10 +555,6 @@
       (s.whyItems || []).forEach(function (w) { L.push('      { img: ' + esc(w.img) + ', title: ' + esc(w.title) + ', desc: ' + esc(w.desc) + ' },'); });
       L.push('    ],');
       L.push('    coursesTitle: ' + esc(s.coursesTitle) + ',');
-      L.push('    msgsTitle: ' + esc(s.msgsTitle) + ',');
-      L.push('    msgs: [');
-      (s.msgs || []).forEach(function (m) { L.push('      { name: ' + esc(m.name) + ', text: ' + esc(m.text) + ', time: ' + esc(m.time) + ' },'); });
-      L.push('    ],');
       L.push('    courses: [');
       (s.courses || []).forEach(function (c) {
         L.push('      { id: ' + Number(c.id) + ', name: ' + esc(c.name) + ', price: ' + esc(c.price) + ', img: ' + esc(c.img) + ', desc: ' + esc(c.desc) + ', detail: ' + esc(c.detail) + ', imgs: ' + JSON.stringify(Array.isArray(c.imgs) ? c.imgs : []) + ' },');
