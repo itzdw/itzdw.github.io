@@ -5,13 +5,19 @@ img{max-width:100%;display:block}
 .wap{max-width:430px;margin:0 auto;min-height:100vh;padding-bottom:60px;background:#fff;overflow:hidden}
 
 /* 顶部 */
-.topbar{position:relative;padding:12px 12px 10px;background:#fff;display:flex;flex-direction:column}
-.searchbox{height:38px;border-radius:19px;background:#f4f4f4;display:flex;align-items:center;justify-content:center;color:#999;position:relative;order:2}
-.searchbox .search-ico{width:15px;height:15px;border:2px solid #aaa;border-radius:50%;margin-right:7px;position:relative}
+.topbar{position:relative;padding:10px 12px;background:#fff;display:flex;flex-direction:row;align-items:center;gap:12px}
+.searchbox{height:38px;border-radius:19px;background:#f4f4f4;display:flex;align-items:center;color:#999;position:relative;order:1;flex:1;min-width:0;padding:0 8px 0 14px}
+.searchbox .search-ico{flex:0 0 auto;width:15px;height:15px;border:2px solid #aaa;border-radius:50%;margin-right:7px;position:relative}
 .searchbox .search-ico:after{content:"";position:absolute;width:7px;height:2px;background:#aaa;transform:rotate(45deg);right:-4px;bottom:-1px;border-radius:2px}
-.search-ph{font-size:13px;color:#999}
-.brand-logo{display:flex;justify-content:center;align-items:center;margin-top:0;order:1}
-.brand-logo img{height:34px;width:auto;object-fit:contain}
+.searchbox input{flex:1;min-width:0;border:0;background:transparent;outline:0;font-size:13px;color:#333}
+.searchbox input::placeholder{color:#9a9a9a}
+.search-results{position:absolute;top:46px;left:0;right:0;background:#fff;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.14);display:none;z-index:60;max-height:300px;overflow-y:auto}
+.search-results a{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;font-size:13px;color:#333;text-decoration:none;border-bottom:1px solid #f5f1ea}
+.search-results a:last-child{border-bottom:0}
+.search-results .s-price{flex:0 0 auto;color:#d0342c;font-size:12px}
+.search-results .s-empty{padding:14px;font-size:12px;color:#999;text-align:center}
+.brand-logo{display:flex;justify-content:flex-start;align-items:center;margin-top:0;order:0;flex:0 0 auto}
+.brand-logo img{height:30px;width:auto;object-fit:contain}
 
 /* 轮播 */
 .banner{position:relative;margin:10px 0;height:210px;background:#f5f5f5;overflow:hidden}
