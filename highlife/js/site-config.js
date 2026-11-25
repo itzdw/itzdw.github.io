@@ -14,6 +14,7 @@ window.HIGHLIFE_SITES = {
       { img: "images/img_009.jpg", title: "高品质课程", sub: "HIGH LIFE 只提供" },
       { img: "images/img_019.jpg", title: "国际化 · 专业化", sub: "国际技术交流平台" },
       { img: "images/img_010.jpg", title: "蜡烛艺术", sub: "JCA 认证课程体系" },
+      { img: "images/img_001.jpg", title: "", sub: "" },
     ],
     hotTitle: "人气课程", highLead: "HIGH LIFE只提供", highTitle: "高品质课程", highPic: "images/img_009.jpg",
     aboutImg: "", aboutLead: "", aboutTitle: "",
