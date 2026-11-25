@@ -463,6 +463,71 @@ createApp({
       setTimeout(()=>{ dlgBust[u]=Date.now(); dlgImgErr[u]=false; }, 25000);
     }
     function mark(){ dirty.value = true; }
+
+    // ===== 单端登录：同一时刻只允许一个端在线，后登录的踢掉先登录的 =====
+    // 本地会话登记（localStorage，同一浏览器所有标签页共享）
+    // 远端会话登记（GitHub admin-session.json，跨设备踢下线；需已配置同步令牌）
+    const SESSION_KEY = 'hl_admin_session_v1';
+    const SESSION_PATH = 'highlife/admin-session.json';
+    let mySid = ''; // 本标签页的会话 ID（sessionStorage，标签页各自独立）
+    function readLocalSession(){
+      try{ return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null') || null; }catch(e){ return null; }
+    }
+    function claimSession(a){
+      mySid = Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10);
+      try{
+        localStorage.setItem(SESSION_KEY, JSON.stringify({ sid: mySid, user: a.user, time: Date.now() }));
+        sessionStorage.setItem('hl_admin_sid', mySid);
+      }catch(e){}
+      // 有令牌才写远端会话（跨设备踢下线依赖它）
+      if(syncToken.value && syncRepo.value){
+        const headers = {'Authorization':'Bearer '+syncToken.value,'Accept':'application/vnd.github+json','Content-Type':'application/json'};
+        const base = 'https://api.github.com/repos/'+syncRepo.value+'/contents/'+SESSION_PATH;
+        const info = { sid: mySid, user: a.user, time: Date.now() };
+        (async () => {
+          for(let i=0; i<2; i++){
+            try{
+              let sha = '';
+              const g = await fetch(base+'?ref='+encodeURIComponent(syncBranch.value)+'&_t='+Date.now(), {headers, cache:'no-store'});
+              if(g.ok) sha = (await g.json()).sha || '';
+              const body = {message:'admin session claim', content:b64(JSON.stringify(info)), branch:syncBranch.value};
+              if(sha) body.sha = sha;
+              const r = await fetch(base, {method:'PUT', headers, body: JSON.stringify(body)});
+              if(r.ok) return;
+              if(r.status !== 409) return;
+            }catch(e){ return; }
+          }
+        })();
+      }
+    }
+    function kickOut(){
+      logged.value = false;
+      mySid = '';
+      sessionStorage.removeItem('hl_admin_user');
+      sessionStorage.removeItem('hl_admin_sid');
+      login.value = {user:'', pwd:''};
+      ElementPlus.ElMessageBox.alert('您的账号刚在另一个页面/设备上登录，本端已自动退出。', '已下线', {confirmButtonText: '知道了', type: 'warning'});
+    }
+    let hbCount = 0;
+    function checkSession(){
+      if(!logged.value || !mySid) return;
+      // 同浏览器其他标签页接管了会话 → 立即踢
+      const ls = readLocalSession();
+      if(ls && ls.sid !== mySid){ kickOut(); return; }
+      // 每 30 秒查一次远端会话（跨设备）
+      hbCount++;
+      if(hbCount % 3 !== 0 || !syncToken.value || !syncRepo.value) return;
+      (async () => {
+        try{
+          const headers = {'Authorization':'Bearer '+syncToken.value,'Accept':'application/vnd.github+json'};
+          const resp = await fetch('https://api.github.com/repos/'+syncRepo.value+'/contents/'+SESSION_PATH+'?ref='+encodeURIComponent(syncBranch.value)+'&_t='+Date.now(), {headers, cache:'no-store'});
+          if(!resp.ok) return;
+          const j = await resp.json();
+          const info = JSON.parse(decodeB64(j.content || '') || '{}');
+          if(info.sid && info.sid !== mySid) kickOut();
+        }catch(e){}
+      })();
+    }
     function doLogin(){
       const a = accounts.value.find(x=> x.user===login.value.user && x.pwd===login.value.pwd);
       if(!a){ ElementPlus.ElMessage.error('账号或密码错误'); return; }
@@ -472,9 +537,17 @@ createApp({
       if(!sites[currentSite.value]) currentSite.value = Object.keys(sites)[0];
       menu.value = a.role==='super' ? 'accounts' : 'basic';
       sessionStorage.setItem('hl_admin_user', a.user);
+      claimSession(a); // 登记会话并踢掉其他端
       ElementPlus.ElMessage.success('登录成功');
     }
-    function logout(){ logged.value=false; sessionStorage.removeItem('hl_admin_user'); login.value={user:'',pwd:''}; }
+    function logout(){
+      logged.value = false;
+      sessionStorage.removeItem('hl_admin_user');
+      sessionStorage.removeItem('hl_admin_sid');
+      try{ const ls = readLocalSession(); if(ls && ls.sid === mySid) localStorage.removeItem(SESSION_KEY); }catch(e){}
+      mySid = '';
+      login.value = {user:'', pwd:''};
+    }
 
     // ---------- 彩蛋：连续点击 Logo 10 次显示演示账号（2 秒内连续点击才累计） ----------
     const hintShown = ref(false);
@@ -891,6 +964,7 @@ createApp({
     }
     function tick(){
       if(!logged.value) return;
+      checkSession(); // 单端登录巡检：被其他端登录则本端下线
       saveDraft();
       if(syncEnabled.value && syncToken.value && dirty.value) syncNow();
     }
@@ -898,12 +972,15 @@ createApp({
     onMounted(()=>{
       loadSyncSettings();
       const u = sessionStorage.getItem('hl_admin_user');
-      if(u){
+      const mySsid = sessionStorage.getItem('hl_admin_sid');
+      const lsSession = readLocalSession();
+      if(u && mySsid && lsSession && lsSession.sid === mySsid){
         const a=accounts.value.find(x=>x.user===u);
         if(a){
           logged.value=true; account.value=deepClone(a);
           currentSite.value=a.role==='super'?Object.keys(sites)[0]:a.site;
           menu.value=a.role==='super'?'accounts':'basic';
+          mySid = mySsid; // 恢复本端会话身份（刷新页面不掉线）
           // 基线快照必须在恢复草稿之前记录：它代表"我方最后一次确认与线上一致的版本"
           // 优先用本地持久化快照（跨天/刷新后仍能正确对比出"别人在我上次同步后改了什么"）
           const savedBase = loadSyncBase();
@@ -911,6 +988,10 @@ createApp({
           if(!savedBase) saveSyncBase(lastSyncedText);
           loadDraft();
         }
+      } else if(u){
+        // 会话不匹配（被其他端登录接管过）→ 清理残留登录态
+        sessionStorage.removeItem('hl_admin_user');
+        sessionStorage.removeItem('hl_admin_sid');
       }
       setInterval(tick, 10000); // 每10秒自动保存 + 条件同步
     });
