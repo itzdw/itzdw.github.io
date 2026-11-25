@@ -36,7 +36,9 @@
 
   function card(item, i) {
     var d = document.createElement('a');
-    d.className = 'course'; d.href = '#contact';
+    d.className = 'course';
+    // 跳转课程详情页（详情页支持 ?id= 课程id，?t= 站点参数原样带上）
+    d.href = 'course.html?t=' + encodeURIComponent(siteId) + '&id=' + encodeURIComponent(item.id != null ? item.id : i);
     d.setAttribute('data-hl-kind', 'item');
     d.setAttribute('data-hl-list', 'courses');
     d.setAttribute('data-hl-idx', i);
