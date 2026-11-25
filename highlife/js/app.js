@@ -64,7 +64,7 @@
     Array.prototype.forEach.call(dots.children, function (d, i) { d.className = i === idx ? 'on' : ''; });
   }
 
-  var SEC_KEYS = { banner: 'banner', hot: 'hot', high: 'high', partners: 'partners', about: 'about', why: 'whySec', courses: 'courses', contact: 'contact', footer: 'footerText' };
+  var SEC_KEYS = { banner: 'banner', hot: 'hot', high: 'high', partners: 'partners', about: 'about', why: 'whySec', courses: 'courses', msgs: 'msgs', contact: 'contact', footer: 'footerText' };
 
   function renderAll(S) {
     src('logoImg', S.logo);
@@ -79,6 +79,7 @@
     txt('whyTitle', S.whyTitle);
     txt('whySub', S.whySub);
     txt('coursesTitle', S.coursesTitle);
+    txt('msgsTitle', S.msgsTitle);
 
     var c = S.contact || {};
     txt('contactIntro', c.intro);
@@ -104,6 +105,28 @@
     var courses = Array.isArray(S.courses) ? S.courses : [];
     if (hot) { hot.innerHTML = ''; courses.slice(0, 6).forEach(function (x, i) { hot.appendChild(card(x, i)); }); }
     if (allBox) { allBox.innerHTML = ''; courses.forEach(function (x, i) { allBox.appendChild(card(x, i)); }); }
+
+    // 留言板（展示站长精选/审核后的留言）
+    var msgList = document.getElementById('msgList');
+    if (msgList) {
+      msgList.innerHTML = '';
+      (S.msgs || []).forEach(function (m, i) {
+        var d = document.createElement('div'); d.className = 'msg-item';
+        d.setAttribute('data-hl-kind', 'item');
+        d.setAttribute('data-hl-list', 'msgs');
+        d.setAttribute('data-hl-idx', i);
+        d.setAttribute('data-hl-label', '留言');
+        var hd = document.createElement('div'); hd.className = 'msg-hd';
+        var nm = document.createElement('span'); nm.className = 'msg-name'; nm.textContent = m.name || '匿名学员';
+        attr(nm, 'text', 'msgs.' + i + '.name', '留言人');
+        var tm = document.createElement('span'); tm.className = 'msg-time'; tm.textContent = m.time || '';
+        attr(tm, 'text', 'msgs.' + i + '.time', '留言时间');
+        hd.appendChild(nm); hd.appendChild(tm);
+        var tx = document.createElement('p'); tx.className = 'msg-text'; tx.textContent = m.text || '';
+        attr(tx, 'text', 'msgs.' + i + '.text', '留言内容');
+        d.appendChild(hd); d.appendChild(tx); msgList.appendChild(d);
+      });
+    }
 
     // 合作伙伴
     var pg = document.getElementById('partnerGrid');
@@ -204,14 +227,70 @@
     if (track && track.children.length) { idx = (idx + 1) % track.children.length; go(); }
   }, 4000);
 
-  // 表单提交
+  // ===== 表单真实提交：经 FormSubmit.co 转发到站长邮箱（免费、无需注册）
+  // 首次提交后 FormSubmit 会向站长邮箱发一封激活邮件，点一次"Activate"即永久生效
+  function ownerEmail() {
+    var c = (S.contact && S.contact.email) || '';
+    var m = c.match(/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/);
+    return m ? m[0] : '';
+  }
+  function sendToOwner(data, tipEl, okText) {
+    var em = ownerEmail();
+    if (!em) { tipEl.textContent = '站长未配置收件邮箱，暂无法在线提交，请直接电话联系'; return; }
+    data._subject = data._subject || ('【官网】' + (S.name || '') + ' 新咨询');
+    tipEl.textContent = '提交中…';
+    if (!window.fetch) { // 极老浏览器降级：mailto
+      tipEl.innerHTML = '浏览器较旧无法在线提交，<a href="mailto:' + em + '?subject=' + encodeURIComponent(data._subject) + '">点此邮件联系</a>';
+      return;
+    }
+    fetch('https://formsubmit.co/ajax/' + em, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(function (r) { return r.json(); }).then(function (j) {
+      var msg = (j && j.message) || '';
+      if (j && (j.success === 'true' || j.success === true)) { tipEl.textContent = okText; }
+      else if (msg.indexOf('Activation') >= 0) { tipEl.textContent = '留言已记录，邮箱通道激活中，请直接电话联系我们'; }
+      else { tipEl.innerHTML = '提交暂时失败，<a href="mailto:' + em + '">点此邮件联系</a>或直接电话联系我们'; }
+    }).catch(function () {
+      tipEl.innerHTML = '网络异常，<a href="mailto:' + em + '">点此邮件联系</a>或直接电话联系我们';
+    });
+  }
+
+  // 联系区表单（姓名 + Email + 留言）
   var btn = document.getElementById('submitBtn');
   if (btn) btn.addEventListener('click', function () {
-    var input = document.querySelector('.cform input');
+    if (document.body.classList.contains('hl-editing')) return;
+    var nameI = document.getElementById('cfName');
+    var mailI = document.getElementById('cfEmail');
+    var msgT = document.getElementById('cfMsg');
     var tip = document.getElementById('formTip');
-    var v = (input.value || '').trim();
+    var v = ((mailI && mailI.value) || '').trim();
     if (!/^\S+@\S+\.\S+$/.test(v)) { tip.textContent = '请输入有效 Email'; return; }
-    tip.textContent = '提交成功，我们会尽快联系您！'; input.value = '';
+    sendToOwner({
+      _subject: '【官网咨询】' + (S.name || ''),
+      姓名: ((nameI && nameI.value) || '').trim() || '未填写',
+      Email: v,
+      留言: ((msgT && msgT.value) || '').trim() || '（无留言，仅留下联系方式）'
+    }, tip, '提交成功，我们会尽快联系您！');
+    if (mailI) mailI.value = ''; if (msgT) msgT.value = '';
+  });
+
+  // 留言板表单（称呼 + 留言）
+  var msgBtn = document.getElementById('msgSubmit');
+  if (msgBtn) msgBtn.addEventListener('click', function () {
+    if (document.body.classList.contains('hl-editing')) return;
+    var nameI = document.getElementById('msgName');
+    var textT = document.getElementById('msgText');
+    var tip = document.getElementById('msgTip');
+    var v = ((textT && textT.value) || '').trim();
+    if (!v) { tip.textContent = '请填写留言内容'; return; }
+    sendToOwner({
+      _subject: '【官网留言板】' + (S.name || ''),
+      称呼: ((nameI && nameI.value) || '').trim() || '匿名',
+      留言: v
+    }, tip, '留言已提交，感谢您的反馈！');
+    if (textT) textT.value = '';
   });
 
   // 菜单（编辑模式下不触发）
