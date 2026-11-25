@@ -88,8 +88,6 @@
         <el-button type="primary" style="width:100%;margin-top:6px" @click="doLogin">登录</el-button>
       </el-form>
       <div class="hint" v-if="hintShown">超级管理员 admin / admin123　·　演示学员 demo / 123456</div>
-      <div class="hint" v-else-if="logoCount>=3" style="color:#c07a1f">再点击 {{ 10 - logoCount }} 次显示演示账号…</div>
-      <div class="hint">演示账号已隐藏 · 连续点击 Logo 10 次显示</div>
     </div>
   </div>
 
