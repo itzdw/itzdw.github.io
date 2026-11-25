@@ -79,7 +79,7 @@
 <div id="app">
   <div v-if="!logged" class="login-page">
     <div class="login-card">
-      <div class="logo">H</div>
+      <div class="logo" style="cursor:pointer;user-select:none" title="" @click="logoClick">H</div>
       <h1>HIGH LIFE 内容管理后台</h1>
       <div class="sub">多学员站点 · 可视化定制</div>
       <el-form :model="login" label-position="top" @keyup.enter="doLogin">
@@ -87,7 +87,9 @@
         <el-form-item label="密码"><el-input v-model="login.pwd" type="password" placeholder="请输入密码" show-password prefix-icon="Lock"></el-input></el-form-item>
         <el-button type="primary" style="width:100%;margin-top:6px" @click="doLogin">登录</el-button>
       </el-form>
-      <div class="hint">超级管理员 admin / admin123　·　演示学员 demo / 123456</div>
+      <div class="hint" v-if="hintShown">超级管理员 admin / admin123　·　演示学员 demo / 123456</div>
+      <div class="hint" v-else-if="logoCount>=3" style="color:#c07a1f">再点击 {{ 10 - logoCount }} 次显示演示账号…</div>
+      <div class="hint">演示账号已隐藏 · 连续点击 Logo 10 次显示</div>
     </div>
   </div>
 
@@ -438,6 +440,22 @@ createApp({
       ElementPlus.ElMessage.success('登录成功');
     }
     function logout(){ logged.value=false; sessionStorage.removeItem('hl_admin_user'); login.value={user:'',pwd:''}; }
+
+    // ---------- 彩蛋：连续点击 Logo 10 次显示演示账号（2 秒内连续点击才累计） ----------
+    const hintShown = ref(false);
+    const logoCount = ref(0);
+    let logoTimer = null;
+    function logoClick(){
+      logoCount.value++;
+      clearTimeout(logoTimer);
+      logoTimer = setTimeout(()=>{ logoCount.value = 0; }, 2000);
+      if(logoCount.value >= 10){
+        hintShown.value = true;
+        logoCount.value = 0;
+        clearTimeout(logoTimer);
+        ElementPlus.ElMessage.success('已显示演示账号');
+      }
+    }
     function onMenu(k){
       if(k==='accounts' && !isSuper.value) return;
       menu.value = k;
@@ -713,7 +731,7 @@ createApp({
       }
       setInterval(tick, 10000); // 每10秒自动保存 + 条件同步
     });
-    return { logged,account,login,sites,accounts,currentSite,menu,dirty,code,accountDialog,newAccount,courseDialog,courseEdit,isSuper,site,imgOptions,draftTime,syncEnabled,syncToken,syncRepo,syncBranch,syncPath,syncMsg,syncOk,mark,doLogin,logout,onMenu,switchSite,addBanner,addCourse,pickUpload,openCourseDetail,pickCourseImg,openAccount,saveAccount,delAccount,generate,copyCode,download,saveSyncSettings,onSyncToggle,syncNow };
+    return { logged,account,login,sites,accounts,currentSite,menu,dirty,code,accountDialog,newAccount,courseDialog,courseEdit,isSuper,site,imgOptions,draftTime,syncEnabled,syncToken,syncRepo,syncBranch,syncPath,syncMsg,syncOk,hintShown,logoCount,logoClick,mark,doLogin,logout,onMenu,switchSite,addBanner,addCourse,pickUpload,openCourseDetail,pickCourseImg,openAccount,saveAccount,delAccount,generate,copyCode,download,saveSyncSettings,onSyncToggle,syncNow };
   }
 }).use(ElementPlus).mount('#app');
 </script>
