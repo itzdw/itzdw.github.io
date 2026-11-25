@@ -108,3 +108,95 @@ img{max-width:100%;display:block}
 .menu-x{width:28px;height:28px;border-radius:50%;background:#469bb7;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px}
 .menu-links{display:flex;flex-wrap:wrap;gap:12px;margin-top:20px;border-top:1px solid #eee;padding-top:14px}
 .menu-links a{font-size:13px;color:#469bb7}
+
+/* PC 顶部导航（移动端隐藏） */
+.pc-nav{display:none}
+
+/* ========== PC 端适配（≥768px） ========== */
+@media (min-width:768px){
+  body{background:#f4f6f7}
+  .wap{max-width:1080px;padding-bottom:0;box-shadow:0 0 24px rgba(0,0,0,.06)}
+
+  /* 顶部：logo + 导航 */
+  .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 28px 10px}
+  .searchbox{display:none}
+  .brand-logo{margin:0}
+  .brand-logo img{height:38px}
+  .pc-nav{display:flex;align-items:center;gap:26px;font-size:14px;color:#444}
+  .pc-nav a{padding:4px 0;border-bottom:2px solid transparent;transition:color .2s,border-color .2s}
+  .pc-nav a:hover{color:#469bb7;border-color:#469bb7}
+  .tabbar{display:none}
+
+  /* 轮播 */
+  .banner{height:440px;margin:6px 0 20px}
+  .banner-track .slide .cap{left:40px;bottom:36px}
+  .banner-track .slide .cap h3{font-size:30px}
+  .banner-track .slide .cap p{font-size:16px}
+
+  /* 通用模块 */
+  .mod{padding:32px 28px 14px}
+  .mod-hd{margin-bottom:22px}
+  .mod-hd h2{font-size:23px}
+
+  /* 课程卡片：4 列 */
+  .course-grid{grid-template-columns:repeat(4,1fr);gap:26px 22px}
+  .course{transition:transform .2s,box-shadow .2s;border-radius:6px}
+  .course:hover{transform:translateY(-3px);box-shadow:0 8px 20px rgba(0,0,0,.08)}
+  .course .name{font-size:14px;min-height:42px;margin-top:10px}
+  .course .price{font-size:15px}
+  .more-btn{transition:background .2s,color .2s}
+  .more-btn:hover{background:#469bb7;color:#fff}
+
+  /* 高品质课程 */
+  .mod-hl .hl-pic{max-width:760px;margin:0 auto}
+  .hl-lead{font-size:15px}
+  .hl-title{font-size:26px}
+
+  /* 合作伙伴：3 列 */
+  .partner-grid{grid-template-columns:repeat(3,1fr);gap:18px}
+  .partner{padding:22px 12px;transition:box-shadow .2s}
+  .partner:hover{box-shadow:0 6px 16px rgba(0,0,0,.07)}
+  .partner img{height:56px}
+  .partner span{font-size:13px}
+
+  /* 关于我们大图 */
+  .feature-bg{margin-top:22px}
+  .feature-bg>img{height:240px;object-position:center bottom}   /* 底部对齐裁切，只显示烤字下方的纯画面区域 */
+  .feature-bg-txt{padding:20px 40px;background:rgba(0,0,0,.5)}
+  .feature-bg-txt p{font-size:16px}
+  .feature-bg-txt h2{font-size:30px;margin-top:10px}
+
+  /* Why choose us：2 列 */
+  .why{padding:44px 28px}
+  .why-hd h2{font-size:26px}
+  .why-hd span{font-size:14px}
+  .why-list{display:grid;grid-template-columns:1fr 1fr;gap:26px 56px}
+  .why-ico{flex:0 0 54px;height:54px}
+  .why-ico img{width:30px;height:30px}
+  .why-item h3{font-size:16px}
+  .why-item p{font-size:13px;margin-top:5px}
+
+  /* 联系区：两栏 */
+  .contact{display:flex;gap:56px;padding:36px 28px;align-items:flex-start}
+  .cinfo{flex:1;font-size:14px;color:#555}
+  .cinfo p{margin-bottom:5px}
+  .cinfo .addr{font-size:12px}
+  .cinfo .cbrand{font-size:18px;margin-top:14px}
+  .cform{flex:0 0 340px;max-width:340px}
+  .cform input{height:40px}
+  .cform button{height:40px;font-size:14px;transition:opacity .2s}
+  .cform button:hover{opacity:.88}
+
+  /* 页脚 */
+  .footer{font-size:12px;padding:26px 0 20px}
+
+  /* 编辑器组件在大屏下也协调 */
+  #hlToolbar{max-width:1080px;margin:0 auto}
+}
+
+/* 大屏（≥1280px）再宽一点 */
+@media (min-width:1280px){
+  .wap{max-width:1200px}
+  .course-grid{grid-template-columns:repeat(4,1fr);gap:30px 26px}
+  .banner{height:480px}
+}
