@@ -14,7 +14,7 @@ window.HIGHLIFE_SITES = {
       { img: "https://itzdw.github.io/highlife/images/upload/1795588920935-banner-soap-craft.png", title: "高品质课程", sub: "HIGH LIFE 只提供" },
       { img: "https://itzdw.github.io/highlife/images/upload/1795588926942-banner-soap-lavender.png", title: "国际化 · 专业化", sub: "国际技术交流平台" },
       { img: "https://itzdw.github.io/highlife/images/upload/1795588932033-banner-soap-spa.png", title: "蜡烛艺术", sub: "JCA 认证课程体系" },
-      { img: "https://itzdw.github.io/highlife/images/upload/1795578416400-2026-10-24_-_6fd4374c.png", title: "轮播图测试", sub: "轮播图测试" },
+      { img: "https://itzdw.github.io/highlife/images/upload/1795588937830-banner-soap-workshop.png", title: "轮播图测试", sub: "轮播图测试" },
     ],
     hotTitle: "人气课程", highLead: "HIGH LIFE只提供", highTitle: "高品质课程", highPic: "images/img_009.jpg",
     aboutImg: "", aboutLead: "", aboutTitle: "",
