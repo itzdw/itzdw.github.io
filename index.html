@@ -63,6 +63,21 @@
     *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
   }
 
+  /* ---------- Matrix binary rain background ---------- */
+  .matrix {
+    position: fixed; inset: 0;
+    z-index: -1;
+    width: 100vw; height: 100vh;
+    pointer-events: none;
+    opacity: .55;
+    /* 让数字雨在顶部更明显、往下渐隐，避免干扰正文阅读 */
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,.95) 0%, rgba(0,0,0,.55) 45%, rgba(0,0,0,.18) 100%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.95) 0%, rgba(0,0,0,.55) 45%, rgba(0,0,0,.18) 100%);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .matrix { display: none; }
+  }
+
   /* ---------- Nav ---------- */
   nav {
     position: sticky; top: 0; z-index: 50;
@@ -437,6 +452,8 @@
   <div class="blob blob-3"></div>
 </div>
 
+<canvas id="matrix-rain" class="matrix" aria-hidden="true"></canvas>
+
 <nav>
   <div class="wrap">
     <div class="logo" id="logo">FDE<span>·建站</span></div>
@@ -681,6 +698,85 @@
     <button class="acc-btn" id="acc-copy">复制账号密码</button>
   </div>
 </div>
+
+<script>
+/* ---------- 黑客风二进制数字雨背景 ---------- */
+(function () {
+  var canvas = document.getElementById('matrix-rain');
+  if (!canvas) return;
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduceMotion) return;
+
+  var ctx = canvas.getContext('2d');
+  var W, H, cols, drops, fontSize = 15;
+  var glyphs = ['0', '1'];
+
+  function resize() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth;
+    H = window.innerHeight;
+    canvas.width = W * dpr;
+    canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    cols = Math.ceil(W / fontSize);
+    drops = [];
+    for (var i = 0; i < cols; i++) {
+      drops[i] = Math.random() * -H / fontSize; /* 随机起始高度，错落感 */
+    }
+    ctx.font = fontSize + 'px "Consolas", "Courier New", monospace';
+    ctx.textBaseline = 'top';
+  }
+
+  var last = 0, interval = 66; /* ~15fps，雨滴下落节奏 */
+
+  function draw(ts) {
+    requestAnimationFrame(draw);
+    if (ts - last < interval) return;
+    last = ts;
+
+    /* 半透明覆盖形成拖尾余晖 */
+    ctx.fillStyle = 'rgba(7, 11, 20, 0.18)';
+    ctx.fillRect(0, 0, W, H);
+
+    for (var i = 0; i < cols; i++) {
+      var x = i * fontSize;
+      var y = drops[i] * fontSize;
+
+      if (Math.random() > 0.975) {
+        /* 雨头高亮：亮青色 + 辉光，制造高级感 */
+        ctx.fillStyle = 'rgba(140, 235, 255, 0.95)';
+        ctx.shadowColor = 'rgba(34, 211, 238, 0.8)';
+        ctx.shadowBlur = 8;
+      } else {
+        ctx.fillStyle = 'rgba(79, 140, 255, 0.42)';
+        ctx.shadowBlur = 0;
+      }
+      ctx.fillText(glyphs[(Math.random() * glyphs.length) | 0], x, y);
+      ctx.shadowBlur = 0;
+
+      /* 越出屏幕后随机重置，让雨持续不断 */
+      if (y > H && Math.random() > 0.985) drops[i] = Math.random() * -20;
+      drops[i] += 0.55;
+    }
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+
+  /* 页面不可见时暂停，节省性能 */
+  document.addEventListener('visibilitychange', function () {
+    if (document.hidden) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    } else if (!rafId) {
+      last = 0;
+      rafId = requestAnimationFrame(draw);
+    }
+  });
+
+  var rafId = requestAnimationFrame(draw);
+})();
+</script>
 
 <script>
 (function () {
