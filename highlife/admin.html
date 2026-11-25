@@ -28,6 +28,7 @@
   .sub-hd{font-size:15px;font-weight:600;margin:0 0 14px;color:#333;border-left:3px solid #469bb7;padding-left:9px}
   .hint{font-size:12px;color:#999;margin-top:8px;line-height:1.7}
   .thumb{width:44px;height:44px;object-fit:cover;border-radius:4px}
+  .thumb-wait{display:flex;align-items:center;justify-content:center;background:#f2f7f9;color:#7fb3c6;font-size:15px;border:1px dashed #a9cede;border-radius:4px;box-sizing:border-box}
   .site-link{font-size:12px;color:#469bb7}
   /* PC 大屏优化 */
   @media (min-width:1200px){
@@ -162,7 +163,7 @@
               <el-form-item label="Logo 图片">
                 <el-button size="small" @click="pickUpload(site,'logo')">⬆ 上传图片</el-button>
               </el-form-item>
-              <el-form-item label="Logo 预览"><img :src="site.logo" style="height:44px;max-width:160px;object-fit:contain;border:1px solid #eee;border-radius:4px"></el-form-item>
+              <el-form-item label="Logo 预览"><img v-if="!site._imgErrL" :src="thumbSrc(site,'logo','L')" @error="thumbErr(site,'L')" @load="site._triesL=0" style="height:44px;max-width:160px;object-fit:contain;border:1px solid #eee;border-radius:4px"><div v-else class="thumb-wait" style="width:160px;height:44px" title="图片上传成功，Pages 构建中（约 1 分钟），会自动显示">⏳</div></el-form-item>
               <el-form-item label="页脚文字"><el-input v-model="site.footer" @input="mark"></el-input></el-form-item>
             </el-form>
             <div class="hint">图片直接点各处的「⬆ 上传图片」按钮上传本机图片（需在「自动同步设置」配置 GitHub 令牌，上传后约 1 分钟前台生效），左侧缩略图会实时更新。</div>
@@ -178,7 +179,8 @@
             </div>
             <div v-for="(b,i) in site.banners" :key="i" class="panel" style="background:#fafafa;box-shadow:none;margin-bottom:10px">
               <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
-                <img :src="b.img" style="width:90px;height:60px;object-fit:cover;border-radius:4px">
+                <img v-if="!b._imgErr" :src="thumbSrc(b,'img')" @error="thumbErr(b)" @load="b._tries=0" style="width:90px;height:60px;object-fit:cover;border-radius:4px">
+                <div v-else class="thumb-wait" style="width:90px;height:60px;font-size:20px" title="图片上传成功，Pages 构建中（约 1 分钟），会自动显示">⏳</div>
                 <el-button size="small" @click="pickUpload(b,'img')">⬆ 上传图片</el-button>
                 <el-input v-model="b.title" @input="mark" placeholder="主标题" style="width:170px"></el-input>
                 <el-input v-model="b.sub" @input="mark" placeholder="副标题" style="width:170px"></el-input>
@@ -196,7 +198,7 @@
               <el-form-item label="人气课程标题"><el-input v-model="site.hotTitle" @input="mark"></el-input></el-form-item>
               <el-form-item label="高品质-引导语"><el-input v-model="site.highLead" @input="mark"></el-input></el-form-item>
               <el-form-item label="高品质课程标题"><el-input v-model="site.highTitle" @input="mark"></el-input></el-form-item>
-              <el-form-item label="高品质课程图片"><div style="display:flex;gap:8px;align-items:center"><img :src="site.highPic" style="height:40px;max-width:120px;object-fit:cover;border-radius:4px;border:1px solid #eee"><el-button size="small" @click="pickUpload(site,'highPic')">⬆ 上传图片</el-button></div></el-form-item>
+              <el-form-item label="高品质课程图片"><div style="display:flex;gap:8px;align-items:center"><img v-if="!site._imgErrH" :src="thumbSrc(site,'highPic','H')" @error="thumbErr(site,'H')" @load="site._triesH=0" style="height:40px;max-width:120px;object-fit:cover;border-radius:4px;border:1px solid #eee"><div v-else class="thumb-wait" style="width:120px;height:40px" title="图片上传成功，Pages 构建中（约 1 分钟），会自动显示">⏳</div><el-button size="small" @click="pickUpload(site,'highPic')">⬆ 上传图片</el-button></div></el-form-item>
               <el-form-item label="合作伙伴标题"><el-input v-model="site.partnerTitle" @input="mark"></el-input></el-form-item>
               <el-form-item label="Why choose us 标题"><el-input v-model="site.whyTitle" @input="mark"></el-input></el-form-item>
               <el-form-item label="Why choose us 副标题"><el-input v-model="site.whySub" @input="mark"></el-input></el-form-item>
@@ -213,7 +215,8 @@
               <el-button type="primary" size="small" @click="site.partners.push({img:imgOptions[0].v,name:''});mark()">+ 添加</el-button>
             </div>
             <div v-for="(p,i) in site.partners" :key="i" style="display:flex;gap:12px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
-              <img :src="p.img" class="thumb">
+              <img v-if="!p._imgErr" class="thumb" :src="thumbSrc(p,'img')" @error="thumbErr(p)" @load="p._tries=0">
+              <div v-else class="thumb thumb-wait" title="图片上传成功，Pages 构建中（约 1 分钟），会自动显示">⏳</div>
               <el-button size="small" @click="pickUpload(p,'img')">⬆ 上传图片</el-button>
               <el-input v-model="p.name" @input="mark" placeholder="名称" style="width:220px"></el-input>
               <el-button size="small" type="danger" @click="site.partners.splice(i,1);mark()">删除</el-button>
@@ -230,7 +233,8 @@
             </div>
             <div v-for="(w,i) in site.whyItems" :key="i" class="panel" style="background:#fafafa;box-shadow:none;margin-bottom:10px">
               <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
-                <img :src="w.img" class="thumb">
+                <img v-if="!w._imgErr" class="thumb" :src="thumbSrc(w,'img')" @error="thumbErr(w)" @load="w._tries=0">
+                <div v-else class="thumb thumb-wait" title="图片上传成功，Pages 构建中（约 1 分钟），会自动显示">⏳</div>
                 <el-button size="small" @click="pickUpload(w,'img')">⬆ 上传图片</el-button>
                 <el-input v-model="w.title" @input="mark" placeholder="标题" style="width:200px"></el-input>
                 <el-button size="small" type="danger" @click="site.whyItems.splice(i,1);mark()">删除</el-button>
@@ -248,7 +252,7 @@
               <el-button type="primary" size="small" @click="addCourse">+ 新增课程</el-button>
             </div>
             <el-table :data="site.courses" size="small" border>
-              <el-table-column label="封面" width="70"><template #default="s"><img class="thumb" :src="s.row.img"></template></el-table-column>
+              <el-table-column label="封面" width="70"><template #default="s"><img v-if="!s.row._imgErr" class="thumb" :src="thumbSrc(s.row,'img')" @error="thumbErr(s.row)" @load="s.row._tries=0"><div v-else class="thumb thumb-wait" title="图片上传成功，Pages 构建中（约 1 分钟），会自动显示">⏳</div></template></el-table-column>
               <el-table-column label="课程名称" show-overflow-tooltip><template #default="s"><el-input v-model="s.row.name" @input="mark" size="small"></el-input></template></el-table-column>
               <el-table-column label="价格" width="110"><template #default="s"><el-input v-model="s.row.price" @input="mark" size="small"></el-input></template></el-table-column>
               <el-table-column label="封面图" width="120"><template #default="s"><el-button size="small" @click="pickUpload(s.row,'img')">⬆ 上传</el-button></template></el-table-column>
@@ -368,7 +372,8 @@
         <el-form-item label="详情图集">
           <div style="width:100%">
             <div v-for="(u,i) in courseEdit.imgs" :key="i" style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
-              <img :src="u" class="thumb">
+              <img v-if="!dlgImgErr[u]" class="thumb" :src="dlgSrc(u)" @error="dlgErr(u)" @load="dlgImgTries[u]=0">
+              <div v-else class="thumb thumb-wait" title="图片上传成功，Pages 构建中（约 1 分钟），会自动显示">⏳</div>
               <el-button size="small" @click="pickCourseImg(i)">⬆ 替换</el-button>
               <el-button size="small" type="danger" @click="courseEdit.imgs.splice(i,1);mark()">删除</el-button>
             </div>
@@ -425,6 +430,38 @@ createApp({
     }
 
     function deepClone(o){ return JSON.parse(JSON.stringify(o)); }
+    // 递归剔除下划线开头的临时字段（缩略图重试状态），避免写入草稿/配置
+    function stripTmp(o){
+      if(Array.isArray(o)) return o.map(stripTmp);
+      if(o && typeof o==='object'){ const r={}; for(const k in o){ if(k.charAt(0)!=='_') r[k]=stripTmp(o[k]); } return r; }
+      return o;
+    }
+
+    // ---------- 缩略图容错：上传后 Pages 构建约 1 分钟，404 期间显示 ⏳ 占位并自动重试 ----------
+    function thumbSrc(t, key, sfx){
+      sfx = sfx||'';
+      const b = t['_bust'+sfx];
+      return t[key] + (b ? '?t='+b : '');
+    }
+    function thumbErr(t, sfx){
+      sfx = sfx||'';
+      t['_imgErr'+sfx] = true;
+      const n = (t['_tries'+sfx]||0)+1;
+      t['_tries'+sfx] = n;
+      if(n>8) return; // 约 3 分钟后放弃，保持占位，等刷新页面
+      setTimeout(()=>{ t['_bust'+sfx]=Date.now(); t['_imgErr'+sfx]=false; }, 25000);
+    }
+    const dlgImgErr = reactive({});
+    const dlgBust = reactive({});
+    const dlgImgTries = reactive({});
+    function dlgSrc(u){ return u + (dlgBust[u] ? '?t='+dlgBust[u] : ''); }
+    function dlgErr(u){
+      dlgImgErr[u] = true;
+      const n = (dlgImgTries[u]||0)+1;
+      dlgImgTries[u] = n;
+      if(n>8) return;
+      setTimeout(()=>{ dlgBust[u]=Date.now(); dlgImgErr[u]=false; }, 25000);
+    }
     function mark(){ dirty.value = true; }
     function doLogin(){
       const a = accounts.value.find(x=> x.user===login.value.user && x.pwd===login.value.pwd);
@@ -530,7 +567,7 @@ createApp({
         if(!/^image\//.test(f.type)){ ElementPlus.ElMessage.warning('请选择图片文件'); return; }
         const url=await uploadImageFile(f); if(!url) return;
         imgOptions.unshift({v:url, l:'⬆ '+f.name.slice(0,16)});
-        target[key]=url; mark();
+        target[key]=url; target._tries=0; target._imgErr=false; mark();
         ElementPlus.ElMessage.success('上传成功，约 1 分钟后前台生效（Pages 构建）');
       };
       inp.click();
@@ -616,7 +653,7 @@ createApp({
     function saveDraft(){
       try{
         localStorage.setItem(DRAFT_KEY, JSON.stringify({
-          sites: deepClone(sites), accounts: deepClone(accounts.value),
+          sites: stripTmp(sites), accounts: deepClone(accounts.value),
           time: Date.now()
         }));
         draftTime.value = new Date().toLocaleTimeString('zh-CN', {hour12:false});
@@ -729,7 +766,7 @@ createApp({
       }
       setInterval(tick, 10000); // 每10秒自动保存 + 条件同步
     });
-    return { logged,account,login,sites,accounts,currentSite,menu,dirty,code,accountDialog,newAccount,courseDialog,courseEdit,isSuper,site,imgOptions,draftTime,syncEnabled,syncToken,syncRepo,syncBranch,syncPath,syncMsg,syncOk,hintShown,logoCount,logoClick,mark,doLogin,logout,onMenu,switchSite,addBanner,addCourse,pickUpload,openCourseDetail,pickCourseImg,openAccount,saveAccount,delAccount,generate,copyCode,download,saveSyncSettings,onSyncToggle,syncNow };
+    return { logged,account,login,sites,accounts,currentSite,menu,dirty,code,accountDialog,newAccount,courseDialog,courseEdit,isSuper,site,imgOptions,draftTime,syncEnabled,syncToken,syncRepo,syncBranch,syncPath,syncMsg,syncOk,hintShown,logoCount,logoClick,thumbSrc,thumbErr,dlgSrc,dlgErr,dlgImgErr,dlgBust,dlgImgTries,mark,doLogin,logout,onMenu,switchSite,addBanner,addCourse,pickUpload,openCourseDetail,pickCourseImg,openAccount,saveAccount,delAccount,generate,copyCode,download,saveSyncSettings,onSyncToggle,syncNow };
   }
 }).use(ElementPlus).mount('#app');
 </script>
