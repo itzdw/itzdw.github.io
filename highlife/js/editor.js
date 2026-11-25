@@ -90,6 +90,8 @@
     '.hl-img-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px}',
     '.hl-img-grid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:5px;border:2px solid transparent;cursor:pointer}',
     '.hl-img-grid img.on{border-color:#469bb7;box-shadow:0 0 0 2px rgba(70,155,183,.3)}',
+    '.hl-up-btn{width:100%;margin-bottom:10px;padding:9px 0;background:#f0f8fb;border:1px dashed #469bb7;color:#469bb7;border-radius:6px;font-size:13px;cursor:pointer}',
+    '.hl-up-btn:hover{background:#e2f1f6}',
     '.hl-code{width:100%;box-sizing:border-box;min-height:220px;font-family:Consolas,monospace;font-size:11px;border:1px solid #ddd;border-radius:5px;padding:8px}'
   ].join('\n');
   var styleEl = document.createElement('style');
@@ -210,6 +212,75 @@
     if (modalWrap) { modalWrap.parentNode.removeChild(modalWrap); modalWrap = null; }
   }
 
+  // ---------- 图片上传（GitHub Contents API，需后台已配置令牌） ----------
+  function readSyncSettings() {
+    try { return JSON.parse(localStorage.getItem('hl_cms_sync_v1') || '{}'); } catch (e) { return {}; }
+  }
+  function repoPagesBase(repo) {
+    if (!repo || repo.indexOf('/') < 0) return '';
+    var owner = repo.split('/')[0], name = repo.split('/')[1];
+    if (name === owner + '.github.io') return 'https://' + owner + '.github.io';
+    return 'https://' + owner + '.github.io/' + name;
+  }
+  // 大图压缩到 1280px 内（>800KB 才压缩；PNG 小图保留原样避免透明变黑）
+  function compressImage(file, cb) {
+    if (file.size <= 800 * 1024) { cb(null); return; }
+    var img = new Image();
+    var u = URL.createObjectURL(file);
+    img.onload = function () {
+      var scale = Math.min(1, 1280 / Math.max(img.width, img.height));
+      var c = document.createElement('canvas');
+      c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(u);
+      cb(c.toDataURL('image/jpeg', 0.85));
+    };
+    img.onerror = function () { URL.revokeObjectURL(u); cb(null); };
+    img.src = u;
+  }
+  function fileToB64(file, cb) {
+    var fr = new FileReader();
+    fr.onload = function () { cb(String(fr.result).split(',')[1]); };
+    fr.readAsDataURL(file);
+  }
+  // 上传到仓库 highlife/images/upload/，成功回调完整 URL
+  function uploadImageFile(file, cb) {
+    var cfg = readSyncSettings();
+    if (!cfg.token) { toast('请先到后台「自动同步设置」填写 GitHub 令牌，再上传图片'); return; }
+    if (!cfg.repo || cfg.repo.indexOf('/') < 0) { toast('请先到后台「自动同步设置」填写仓库'); return; }
+    var branch = cfg.branch || 'master';
+    toast('上传中，请稍候...');
+    compressImage(file, function (dataUrl) {
+      var after = function (b64, ext) {
+        var safe = (file.name || 'img').replace(/[^\w.-]+/g, '-').replace(/^-+|-+$/g, '') || 'img';
+        var path = 'highlife/images/upload/' + Date.now() + '-' + safe;
+        fetch('https://api.github.com/repos/' + cfg.repo + '/contents/' + path, {
+          method: 'PUT',
+          headers: { 'Authorization': 'Bearer ' + cfg.token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: 'upload image', content: b64, branch: branch })
+        }).then(function (r) {
+          if (!r.ok) return r.json().catch(function () { return {}; }).then(function (j) {
+            throw new Error(j.message || ('HTTP ' + r.status));
+          });
+          return r.json();
+        }).then(function (j) {
+          var base = repoPagesBase(cfg.repo);
+          var url = base ? base + '/' + path : (j.content && j.content.download_url) || '';
+          if (!url) throw new Error('未取到图片地址');
+          cb(url);
+          toast('上传成功，约 1 分钟后全站生效');
+        }).catch(function (e) {
+          var m = String(e.message || e);
+          toast(m.indexOf('Bad credentials') >= 0 ? '上传失败：令牌无效' :
+            m.indexOf('Resource not accessible') >= 0 ? '上传失败：令牌需 Contents 读写权限' :
+            '上传失败：' + m.slice(0, 60));
+        });
+      };
+      if (dataUrl) after(dataUrl.split(',')[1], 'jpg');
+      else fileToB64(file, function (b64) { after(b64, (file.name.match(/\.(\w+)$/) || [, 'jpg'])[1]); });
+    });
+  }
+
   // 图片选择器
   function pickImage(current, cb) {
     var chosen = current || '';
@@ -227,6 +298,25 @@
         grid.appendChild(im);
       });
       bd.appendChild(grid);
+      var up = document.createElement('button'); up.className = 'hl-up-btn';
+      up.textContent = '⬆ 上传本机图片';
+      up.addEventListener('click', function (e) {
+        e.preventDefault(); e.stopPropagation();
+        var inp = document.createElement('input');
+        inp.type = 'file'; inp.accept = 'image/*';
+        inp.addEventListener('change', function () {
+          var f = inp.files && inp.files[0];
+          if (!f) return;
+          if (!/^image\//.test(f.type)) { toast('请选择图片文件'); return; }
+          uploadImageFile(f, function (url) {
+            chosen = url; urlInput.value = url; mark();
+            if (IMG_OPTIONS.indexOf(url) < 0) IMG_OPTIONS.push(url);
+            closeModal(); cb(url);
+          });
+        });
+        inp.click();
+      });
+      bd.appendChild(up);
       var lbl = document.createElement('div'); lbl.className = 'hl-field';
       lbl.innerHTML = '<label>或输入自定义图片地址 / URL</label>';
       var urlInput = document.createElement('input'); urlInput.type = 'text'; urlInput.value = chosen || '';
