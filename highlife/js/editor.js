@@ -52,7 +52,7 @@
 
   // ---------- 基础样式 ----------
   var css = [
-    '#hlToolbar,#hlBar,.hl-sec-chip,#hlToast,#hlDraftBadge{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;box-sizing:border-box}',
+    '#hlToolbar,#hlBar,.hl-sec-chip,#hlToast{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;box-sizing:border-box}',
     '#hlToolbar{position:fixed;top:0;left:0;right:0;z-index:10001;background:#1f2d3d;color:#fff;display:flex;align-items:center;gap:8px;padding:8px 10px;font-size:13px}',
     '#hlToolbar .hl-tt{font-weight:bold;margin-right:auto}',
     '#hlToolbar button{background:#469bb7;border:none;color:#fff;border-radius:4px;padding:6px 12px;font-size:13px;cursor:pointer}',
@@ -74,7 +74,6 @@
     'body.hl-editing [contenteditable="true"]{outline:2px solid #e6a23c!important;background:rgba(230,162,60,.12);min-width:20px}',
     '#hlToast{position:fixed;left:50%;bottom:120px;transform:translateX(-50%);z-index:10005;background:rgba(0,0,0,.78);color:#fff;padding:9px 18px;border-radius:6px;font-size:13px;max-width:80vw;text-align:center;transition:opacity .3s;opacity:0;pointer-events:none}',
     '#hlToast.show{opacity:1}',
-    '#hlDraftBadge{position:fixed;left:10px;bottom:76px;z-index:9997;background:rgba(230,162,60,.9);color:#fff;font-size:11px;padding:4px 8px;border-radius:4px}',
     '#hlModalWrap{position:fixed;inset:0;z-index:10003;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center}',
     '.hl-modal{background:#fff;border-radius:10px;width:min(92vw,420px);max-height:82vh;display:flex;flex-direction:column;overflow:hidden}',
     '.hl-modal-hd{padding:12px 14px;font-weight:bold;font-size:15px;border-bottom:1px solid #eee;display:flex;align-items:center}',
@@ -683,13 +682,7 @@
   // ---------- 初始化 ----------
   var t = document.createElement('div'); t.id = 'hlToast'; document.body.appendChild(t);
   // 展示页不再显示「编辑此页」按钮；编辑入口统一由后台「✏️ 可视化编辑」跳转（?edit=1）
-  // 草稿预览角标（当前页面展示的是本地草稿而非线上文件时提示）
-  if (HL.draftTime) {
-    var badge = document.createElement('div');
-    badge.id = 'hlDraftBadge';
-    badge.textContent = '预览本地草稿（后台可同步上线）';
-    document.body.appendChild(badge);
-  }
+  // 已移除「预览本地草稿」角标（前台是给用户看的展示页）
   // ?edit=1 直达编辑
   var qs = new URLSearchParams(location.search);
   if (qs.get('edit') === '1') {
