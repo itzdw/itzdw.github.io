@@ -116,17 +116,12 @@
             <el-form label-width="110px">
               <el-form-item label="站点名称"><el-input v-model="site.name" @input="mark"></el-input></el-form-item>
               <el-form-item label="Logo 图片">
-                <div style="display:flex;gap:8px">
-                  <el-select v-model="site.logo" @change="mark" style="flex:1">
-                    <el-option v-for="o in imgOptions" :key="o.v" :label="o.l" :value="o.v"></el-option>
-                  </el-select>
-                  <el-button size="small" @click="pickUpload(site,'logo')">⬆ 上传</el-button>
-                </div>
+                <el-button size="small" @click="pickUpload(site,'logo')">⬆ 上传图片</el-button>
               </el-form-item>
               <el-form-item label="Logo 预览"><img :src="site.logo" style="height:44px;max-width:160px;object-fit:contain;border:1px solid #eee;border-radius:4px"></el-form-item>
               <el-form-item label="页脚文字"><el-input v-model="site.footer" @input="mark"></el-input></el-form-item>
             </el-form>
-            <div class="hint">图片可以直接点各图片选择框旁的「⬆ 上传」按钮上传本机图片（需在「自动同步设置」配置 GitHub 令牌，上传后约 1 分钟前台生效）；也可以把图片文件放入 images/ 目录后在下拉框选择。</div>
+            <div class="hint">图片直接点各处的「⬆ 上传图片」按钮上传本机图片（需在「自动同步设置」配置 GitHub 令牌，上传后约 1 分钟前台生效），左侧缩略图会实时更新。</div>
           </div>
         </template>
 
@@ -140,8 +135,7 @@
             <div v-for="(b,i) in site.banners" :key="i" class="panel" style="background:#fafafa;box-shadow:none;margin-bottom:10px">
               <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap">
                 <img :src="b.img" style="width:90px;height:60px;object-fit:cover;border-radius:4px">
-                <el-select v-model="b.img" @change="mark" style="width:200px"><el-option v-for="o in imgOptions" :key="o.v" :label="o.l" :value="o.v"></el-option></el-select>
-                <el-button size="small" @click="pickUpload(b,'img')">⬆ 上传</el-button>
+                <el-button size="small" @click="pickUpload(b,'img')">⬆ 上传图片</el-button>
                 <el-input v-model="b.title" @input="mark" placeholder="主标题" style="width:170px"></el-input>
                 <el-input v-model="b.sub" @input="mark" placeholder="副标题" style="width:170px"></el-input>
                 <el-button size="small" type="danger" @click="site.banners.splice(i,1);mark()">删除</el-button>
@@ -158,7 +152,7 @@
               <el-form-item label="人气课程标题"><el-input v-model="site.hotTitle" @input="mark"></el-input></el-form-item>
               <el-form-item label="高品质-引导语"><el-input v-model="site.highLead" @input="mark"></el-input></el-form-item>
               <el-form-item label="高品质课程标题"><el-input v-model="site.highTitle" @input="mark"></el-input></el-form-item>
-              <el-form-item label="高品质课程图片"><div style="display:flex;gap:8px;width:100%"><el-select v-model="site.highPic" @change="mark" style="flex:1"><el-option v-for="o in imgOptions" :key="o.v" :label="o.l" :value="o.v"></el-option></el-select><el-button size="small" @click="pickUpload(site,'highPic')">⬆ 上传</el-button></div></el-form-item>
+              <el-form-item label="高品质课程图片"><div style="display:flex;gap:8px;align-items:center"><img :src="site.highPic" style="height:40px;max-width:120px;object-fit:cover;border-radius:4px;border:1px solid #eee"><el-button size="small" @click="pickUpload(site,'highPic')">⬆ 上传图片</el-button></div></el-form-item>
               <el-form-item label="合作伙伴标题"><el-input v-model="site.partnerTitle" @input="mark"></el-input></el-form-item>
               <el-form-item label="Why choose us 标题"><el-input v-model="site.whyTitle" @input="mark"></el-input></el-form-item>
               <el-form-item label="Why choose us 副标题"><el-input v-model="site.whySub" @input="mark"></el-input></el-form-item>
@@ -176,8 +170,7 @@
             </div>
             <div v-for="(p,i) in site.partners" :key="i" style="display:flex;gap:12px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
               <img :src="p.img" class="thumb">
-              <el-select v-model="p.img" @change="mark" style="width:180px"><el-option v-for="o in imgOptions" :key="o.v" :label="o.l" :value="o.v"></el-option></el-select>
-              <el-button size="small" @click="pickUpload(p,'img')">⬆ 上传</el-button>
+              <el-button size="small" @click="pickUpload(p,'img')">⬆ 上传图片</el-button>
               <el-input v-model="p.name" @input="mark" placeholder="名称" style="width:220px"></el-input>
               <el-button size="small" type="danger" @click="site.partners.splice(i,1);mark()">删除</el-button>
             </div>
@@ -194,8 +187,7 @@
             <div v-for="(w,i) in site.whyItems" :key="i" class="panel" style="background:#fafafa;box-shadow:none;margin-bottom:10px">
               <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
                 <img :src="w.img" class="thumb">
-                <el-select v-model="w.img" @change="mark" style="width:160px"><el-option v-for="o in imgOptions" :key="o.v" :label="o.l" :value="o.v"></el-option></el-select>
-                <el-button size="small" @click="pickUpload(w,'img')">⬆ 上传</el-button>
+                <el-button size="small" @click="pickUpload(w,'img')">⬆ 上传图片</el-button>
                 <el-input v-model="w.title" @input="mark" placeholder="标题" style="width:200px"></el-input>
                 <el-button size="small" type="danger" @click="site.whyItems.splice(i,1);mark()">删除</el-button>
               </div>
@@ -215,7 +207,7 @@
               <el-table-column label="封面" width="70"><template #default="s"><img class="thumb" :src="s.row.img"></template></el-table-column>
               <el-table-column label="课程名称" show-overflow-tooltip><template #default="s"><el-input v-model="s.row.name" @input="mark" size="small"></el-input></template></el-table-column>
               <el-table-column label="价格" width="120"><template #default="s"><el-input v-model="s.row.price" @input="mark" size="small"></el-input></template></el-table-column>
-              <el-table-column label="封面图" width="200"><template #default="s"><div style="display:flex;gap:6px"><el-select v-model="s.row.img" @change="mark" size="small" style="flex:1"><el-option v-for="o in imgOptions" :key="o.v" :label="o.l" :value="o.v"></el-option></el-select><el-button size="small" @click="pickUpload(s.row,'img')">⬆</el-button></div></template></el-table-column>
+              <el-table-column label="封面图" width="130"><template #default="s"><el-button size="small" @click="pickUpload(s.row,'img')">⬆ 上传图片</el-button></template></el-table-column>
               <el-table-column label="操作" width="70"><template #default="s"><el-button size="small" type="danger" @click="site.courses.splice(s.$index,1);mark()">删</el-button></template></el-table-column>
             </el-table>
           </div>
