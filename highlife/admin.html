@@ -697,15 +697,112 @@ createApp({
     }
     function onSyncToggle(){ saveSyncSettings(); }
     function b64(s){ return btoa(unescape(encodeURIComponent(s))); }
-    let syncing = false; // 防止 10 秒定时器并发提交（并发会拿到同一个 sha，后提交者 409）
-    async function syncOnce(headers, base, text){
-      // 关键：GET 必须禁用缓存并带随机参数，否则浏览器可能返回旧 sha 导致 409
-      const getResp = await fetch(base+'?ref='+encodeURIComponent(syncBranch.value)+'&_t='+Date.now(), {
-        headers, cache:'no-store'
+    // ===== 多人协作保护：提交前对比线上版本，无冲突字段自动合并，冲突字段弹窗让用户选择 =====
+    const SYNCBASE_KEY = 'hl_cms_syncbase_v1'; // 本浏览器最后一次确认与线上一致的配置快照
+    function saveSyncBase(text){
+      lastSyncedText = text;
+      try{ localStorage.setItem(SYNCBASE_KEY, JSON.stringify({text:text, time:Date.now()})); }catch(e){}
+    }
+    function loadSyncBase(){
+      try{
+        const raw = localStorage.getItem(SYNCBASE_KEY);
+        if(raw){ const s = JSON.parse(raw); if(s && s.text) return s.text; }
+      }catch(e){}
+      return '';
+    }
+    function decodeB64(b64){
+      const bin = atob(String(b64).replace(/\s/g,''));
+      try{ return decodeURIComponent(escape(bin)); }catch(e){ return bin; }
+    }
+    // 把 site-config.js 文本解析回 {accounts, sites}（旧格式/损坏文件返回 null）
+    function parseConfigText(t){
+      try{
+        const fn = new Function(String(t)
+          .replace(/window\.HIGHLIFE_ACCOUNTS/g,'var __A')
+          .replace(/window\.HIGHLIFE_SITES/g,'var __S') + '; return {accounts:__A, sites:__S};');
+        const r = fn();
+        if(r && Array.isArray(r.accounts) && r.sites) return r;
+      }catch(e){}
+      return null;
+    }
+    // 键排序的稳定序列化（对象键顺序不同但内容相同不算差异）
+    function sortedStringify(v){
+      if(Array.isArray(v)) return '['+v.map(sortedStringify).join(',')+']';
+      if(v && typeof v==='object'){ const ks=Object.keys(v).sort(); return '{'+ks.map(k=>JSON.stringify(k)+':'+sortedStringify(v[k])).join(',')+'}'; }
+      return JSON.stringify(v);
+    }
+    // 拍平成 { '站点.字段' / '__acct::用户名' : 稳定JSON串 }，便于逐字段对比
+    function flattenConfig(cfg){
+      const m = {};
+      (cfg.accounts||[]).forEach((a,i)=>{ m['__acct::'+((a&&a.user!=null)?a.user:i)] = sortedStringify(a); });
+      Object.keys(cfg.sites||{}).forEach(sid=>{
+        const s = cfg.sites[sid]||{};
+        Object.keys(s).forEach(k=>{ m[sid+'.'+k] = sortedStringify(s[k]); });
       });
-      let sha = '';
-      if(getResp.ok){ const gj = await getResp.json(); sha = gj.sha||''; }
-      else if(getResp.status !== 404){ throw new Error('读取文件失败 HTTP '+getResp.status); }
+      return m;
+    }
+    // 把某个字段值写回本地 live state（val 为稳定JSON串，undefined 表示删除）
+    function applyValue(p, val){
+      if(p.indexOf('__acct::')===0){
+        const key = p.slice(8);
+        const idx = accounts.value.findIndex(a=>String(a.user)===String(key));
+        if(val===undefined){ if(idx>=0) accounts.value.splice(idx,1); return; }
+        const obj = JSON.parse(val);
+        if(idx>=0) accounts.value.splice(idx,1,obj); else accounts.value.push(obj);
+        return;
+      }
+      const dot = p.indexOf('.'); const sid = p.slice(0,dot), k = p.slice(dot+1);
+      if(val===undefined){ if(sites[sid]) delete sites[sid][k]; return; }
+      if(!sites[sid]) sites[sid] = {};
+      sites[sid][k] = JSON.parse(val);
+    }
+    function remoteValue(p, cfg){
+      if(p.indexOf('__acct::')===0){
+        const u = p.slice(8);
+        const a = (cfg.accounts||[]).find(x=>String(x.user)===String(u));
+        return a ? sortedStringify(a) : undefined;
+      }
+      const dot = p.indexOf('.');
+      const s = (cfg.sites||{})[p.slice(0,dot)];
+      if(!s) return undefined;
+      const v = s[p.slice(dot+1)];
+      return v===undefined ? undefined : sortedStringify(v);
+    }
+    // 把远端配置合并进本地 live state：增删的站点/账号整级处理，共有字段逐个对比
+    // 以 lastSyncedText（我方最后确认与线上一致的快照）为共同基线
+    // 返回 {merged, conflicts:[字段路径]}；冲突字段默认保留本地（重试轮次不打断用户）
+    function mergeRemote(remoteCfg){
+      const baseCfg = parseConfigText(lastSyncedText);
+      // 结构不完整（旧格式/异常文件）不进入合并，降级为整份覆盖询问
+      if(!baseCfg || !remoteCfg || !remoteCfg.sites || !Array.isArray(remoteCfg.accounts) || !Array.isArray(baseCfg.accounts)) return {merged:false, conflicts:[], parseFail:true};
+      // 站点/账号的增删
+      Object.keys(remoteCfg.sites||{}).forEach(sid=>{ if(!sites[sid]) sites[sid] = JSON.parse(JSON.stringify(remoteCfg.sites[sid])); });
+      Object.keys(baseCfg.sites||{}).forEach(sid=>{ if(!remoteCfg.sites[sid]) delete sites[sid]; });
+      remoteCfg.accounts.forEach(a=>{ if(!accounts.value.some(x=>x.user===a.user)) accounts.value.push(JSON.parse(JSON.stringify(a))); });
+      baseCfg.accounts.forEach(a=>{ if(!remoteCfg.accounts.some(x=>x.user===a.user)){ const i=accounts.value.findIndex(x=>x.user===a.user); if(i>=0) accounts.value.splice(i,1); } });
+      // 共有字段逐个对比
+      const B = flattenConfig(baseCfg), R = flattenConfig(remoteCfg);
+      const M = flattenConfig({accounts: accounts.value, sites: stripTmp(sites)});
+      const conflicts = [];
+      const keys = {};
+      Object.keys(B).forEach(k=>keys[k]=1); Object.keys(R).forEach(k=>keys[k]=1); Object.keys(M).forEach(k=>keys[k]=1);
+      Object.keys(keys).forEach(p=>{
+        const b=B[p], m=M[p], r=R[p];
+        const mineChanged = m!==b, theirChanged = r!==b;
+        if(theirChanged && !mineChanged){ applyValue(p, r); }        // 只有对方改了 → 采用线上
+        else if(theirChanged && mineChanged && m!==r){ conflicts.push(p); } // 双方都改且不同 → 冲突
+      });
+      return {merged:true, conflicts};
+    }
+    async function fetchRemote(headers, base){
+      // GET 必须禁用缓存并带随机参数，否则浏览器可能返回旧内容
+      const resp = await fetch(base+'?ref='+encodeURIComponent(syncBranch.value)+'&_t='+Date.now(), {headers, cache:'no-store'});
+      if(resp.status===404) return {sha:'', text:''};
+      if(!resp.ok) throw new Error('读取线上配置失败 HTTP '+resp.status);
+      const gj = await resp.json();
+      return {sha: gj.sha||'', text: decodeB64(gj.content||'')};
+    }
+    async function putConfig(headers, base, text, sha){
       const body = {message:'Auto-sync site config', content:b64(text), branch:syncBranch.value};
       if(sha) body.sha = sha;
       const putResp = await fetch(base, {method:'PUT', headers, body:JSON.stringify(body)});
@@ -713,27 +810,74 @@ createApp({
       const err = await putResp.json().catch(()=>({}));
       const e = new Error(err.message||('HTTP '+putResp.status)); e.status = putResp.status; throw e;
     }
+    function fmtPaths(paths){
+      const show = paths.slice(0,6).map(p=> p.indexOf('__acct::')===0 ? ('账号('+p.slice(8)+')') : p).join('、');
+      return paths.length>6 ? show+' 等 '+paths.length+' 处' : show;
+    }
+    function askConflict(paths){
+      return ElementPlus.ElMessageBox.confirm(
+        '你和其他人同时修改了：'+fmtPaths(paths)+'。请选择保留哪一方（未冲突的部分已自动合并）。',
+        '检测到修改冲突',
+        {confirmButtonText:'用我的修改', cancelButtonText:'用线上版本', distinguishCancelAndClose:true, type:'warning'}
+      ).then(()=>'mine').catch(a=> a==='cancel' ? 'theirs' : null);
+    }
+    function askOverwriteAll(){
+      return ElementPlus.ElMessageBox.confirm(
+        '线上配置已被其他人修改，但格式较旧无法自动合并。用我当前的版本覆盖线上？',
+        '线上有他人修改',
+        {confirmButtonText:'覆盖线上', cancelButtonText:'取消', distinguishCancelAndClose:true, type:'warning'}
+      ).then(()=>true).catch(()=>null);
+    }
+    let syncing = false; // 防止 10 秒定时器并发提交（并发会拿到同一个 sha，后提交者 409）
     async function syncNow(){
       if(syncing) return; // 上一次还没完成，直接跳过这一轮
       if(!syncToken.value){ ElementPlus.ElMessage.warning('请先填写 GitHub 令牌'); return; }
       if(!syncRepo.value || !syncRepo.value.includes('/')){ ElementPlus.ElMessage.warning('仓库格式应为 owner/repo'); return; }
-      const text = buildConfigText();
-      if(text === lastSyncedText && !dirty.value){ syncMsg.value = '无变化，跳过'; syncOk.value = true; return; }
+      const preText = buildConfigText();
+      if(!dirty.value && preText === lastSyncedText){ syncMsg.value = '无变化，跳过'; syncOk.value = true; return; }
       syncing = true; syncMsg.value = '同步中...';
       try{
         const headers = {'Authorization':'Bearer '+syncToken.value,'Accept':'application/vnd.github+json','Content-Type':'application/json'};
         const base = 'https://api.github.com/repos/'+syncRepo.value+'/contents/'+syncPath.value;
+        const tstr = () => new Date().toLocaleTimeString('zh-CN',{hour12:false});
         let done = false;
-        try{
-          done = await syncOnce(headers, base, text);
-        }catch(e){
-          // 409 冲突：sha 过期，重新取最新 sha 再试一次
-          if(e.status === 409){ done = await syncOnce(headers, base, text); }
-          else throw e;
-        }
-        if(done){
-          lastSyncedText = text; dirty.value = false; syncOk.value = true;
-          syncMsg.value = '成功 '+new Date().toLocaleTimeString('zh-CN',{hour12:false});
+        for(let attempt=1; attempt<=3 && !done; attempt++){
+          const tryPut = async (t, sha) => {
+            try{ return await putConfig(headers, base, t, sha); }
+            catch(e){ if(e.status===409 && attempt<3) return false; throw e; } // 409：期间又有新提交，下一轮重新对比合并
+          };
+          const remote = await fetchRemote(headers, base);
+          if(remote.text === lastSyncedText){
+            // 线上无他人改动 → 直接提交本地版本
+            done = await tryPut(buildConfigText(), remote.sha);
+            if(done){ saveSyncBase(buildConfigText()); dirty.value=false; syncOk.value=true; syncMsg.value='成功 '+tstr(); }
+            break;
+          }
+          const remoteCfg = parseConfigText(remote.text);
+          if(!remoteCfg){
+            if(attempt===1){
+              const act = await askOverwriteAll();
+              if(!act){ syncMsg.value='已取消：线上有他人修改，未提交（你的修改保留在草稿中）'; syncOk.value=false; break; }
+            }
+            done = await tryPut(buildConfigText(), remote.sha);
+            if(done){ saveSyncBase(buildConfigText()); dirty.value=false; syncOk.value=true; syncMsg.value='已覆盖线上 '+tstr(); }
+            break;
+          }
+          // 线上有他人新版本 → 先合并进本地（冲突字段默认保留本地，仅第一轮弹窗询问）
+          const res = mergeRemote(remoteCfg);
+          if(!sites[currentSite.value] && Object.keys(sites).length) currentSite.value = Object.keys(sites)[0];
+          if(res.conflicts.length && attempt===1){
+            const choice = await askConflict(res.conflicts);
+            if(!choice){ syncMsg.value='已取消：存在冲突未提交（你的修改仍保留在草稿中）'; syncOk.value=false; break; }
+            if(choice==='theirs'){ res.conflicts.forEach(p=> applyValue(p, remoteValue(p, remoteCfg))); }
+          }
+          const mergedText = buildConfigText();
+          done = await tryPut(mergedText, remote.sha);
+          if(done){
+            saveSyncBase(mergedText);
+            dirty.value = false; syncOk.value = true;
+            syncMsg.value = (res.conflicts.length ? '已合并冲突并提交 ' : '已自动合并线上他人修改并提交 ') + tstr();
+          }
         }
       }catch(e){
         syncOk.value = false;
@@ -760,8 +904,12 @@ createApp({
           logged.value=true; account.value=deepClone(a);
           currentSite.value=a.role==='super'?Object.keys(sites)[0]:a.site;
           menu.value=a.role==='super'?'accounts':'basic';
+          // 基线快照必须在恢复草稿之前记录：它代表"我方最后一次确认与线上一致的版本"
+          // 优先用本地持久化快照（跨天/刷新后仍能正确对比出"别人在我上次同步后改了什么"）
+          const savedBase = loadSyncBase();
+          lastSyncedText = savedBase || buildConfigText();
+          if(!savedBase) saveSyncBase(lastSyncedText);
           loadDraft();
-          lastSyncedText = buildConfigText();
         }
       }
       setInterval(tick, 10000); // 每10秒自动保存 + 条件同步
