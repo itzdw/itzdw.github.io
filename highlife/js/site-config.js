@@ -68,7 +68,7 @@ window.HIGHLIFE_SITES = {
     contact: {
       intro: '关于课程咨询和报名，欢迎联系我们。',
       email: 'Email：itzdw@qq.com',
-      tel: 'Tel : 18601365446',
+      tel: 'Tel : 13414466970',
       addr: 'Tianjin Binhai New Area Zhongxin Ecological City Shimao Jiuxi 3402',
       brand: 'HIGH LIFE_culture',
       formLabel: '在线表单提交'
