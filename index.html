@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FDE 前置部署工程师 · 建站能力 | ITZDW</title>
+<meta name="description" content="FDE 前置部署工程师（Forward Deployed Engineer）的建站能力展示：需求澄清、原型设计、快速交付、持续迭代，一站式建站服务。">
+<style>
+  :root {
+    --bg: #0b0f1a;
+    --bg-soft: #111827;
+    --card: #151d2e;
+    --card-hover: #1a2438;
+    --border: #233047;
+    --text: #e8edf6;
+    --text-dim: #94a3b8;
+    --accent: #4f8cff;
+    --accent2: #22d3ee;
+    --grad: linear-gradient(120deg, #4f8cff 0%, #22d3ee 100%);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; text-decoration: none; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  /* ---------- Nav ---------- */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(11, 15, 26, .85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { font-weight: 700; font-size: 18px; letter-spacing: .5px; }
+  .logo span { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .nav-links { display: flex; gap: 28px; font-size: 14px; color: var(--text-dim); }
+  .nav-links a:hover { color: var(--text); }
+  @media (max-width: 640px) { .nav-links { display: none; } }
+
+  /* ---------- Hero ---------- */
+  header {
+    padding: 110px 0 90px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: "";
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(600px 300px at 30% 20%, rgba(79,140,255,.18), transparent),
+      radial-gradient(600px 300px at 70% 60%, rgba(34,211,238,.12), transparent);
+    pointer-events: none;
+  }
+  .badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--accent2);
+    background: rgba(34,211,238,.06);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: clamp(32px, 6vw, 56px);
+    font-weight: 800;
+    line-height: 1.25;
+    letter-spacing: 1px;
+  }
+  h1 .grad { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .hero-sub {
+    max-width: 640px;
+    margin: 22px auto 0;
+    color: var(--text-dim);
+    font-size: 17px;
+  }
+  .hero-btns { margin-top: 36px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    padding: 12px 30px; border-radius: 10px; font-size: 15px; font-weight: 600;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-primary { background: var(--grad); color: #fff; box-shadow: 0 8px 24px rgba(79,140,255,.3); }
+  .btn-ghost { border: 1px solid var(--border); color: var(--text-dim); }
+  .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
+
+  /* ---------- Section ---------- */
+  section { padding: 80px 0; border-top: 1px solid var(--border); }
+  .sec-tag { color: var(--accent2); font-size: 14px; font-weight: 600; letter-spacing: 2px; }
+  h2 { font-size: clamp(24px, 4vw, 34px); margin: 10px 0 14px; }
+  .sec-desc { color: var(--text-dim); max-width: 680px; }
+
+  /* ---------- Cards ---------- */
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 44px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px;
+    transition: transform .2s ease, background .2s ease, border-color .2s ease;
+  }
+  .card:hover { transform: translateY(-4px); background: var(--card-hover); border-color: var(--accent); }
+  .card .icon { font-size: 28px; margin-bottom: 14px; }
+  .card h3 { font-size: 18px; margin-bottom: 8px; }
+  .card p { font-size: 14px; color: var(--text-dim); }
+
+  /* ---------- Process timeline ---------- */
+  .steps { margin-top: 44px; display: grid; gap: 0; }
+  .step {
+    display: flex; gap: 22px; padding: 22px 0;
+    border-bottom: 1px dashed var(--border);
+  }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    flex: none; width: 44px; height: 44px; border-radius: 12px;
+    background: rgba(79,140,255,.12); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; color: var(--accent);
+  }
+  .step h3 { font-size: 17px; margin-bottom: 4px; }
+  .step p { font-size: 14px; color: var(--text-dim); }
+
+  /* ---------- Stack ---------- */
+  .chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
+  .chip {
+    padding: 9px 18px; border-radius: 999px;
+    border: 1px solid var(--border); background: var(--card);
+    font-size: 14px; color: var(--text-dim);
+    transition: color .2s, border-color .2s;
+  }
+  .chip:hover { color: var(--accent2); border-color: var(--accent2); }
+
+  /* ---------- FDE quote ---------- */
+  .quote {
+    margin-top: 44px;
+    background: var(--card);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 14px 14px 0;
+    padding: 26px 30px;
+    color: var(--text-dim);
+    font-size: 15px;
+  }
+  .quote b { color: var(--text); }
+
+  /* ---------- Footer ---------- */
+  footer { padding: 50px 0 60px; text-align: center; color: var(--text-dim); font-size: 13px; border-top: 1px solid var(--border); }
+  footer .links { display: flex; gap: 24px; justify-content: center; margin-bottom: 14px; }
+  footer a:hover { color: var(--accent2); }
+  /* ---------- Hidden demo account modal ---------- */
+  #secret-mask {
+    display: none;
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,.55);
+    backdrop-filter: blur(4px);
+  }
+  #secret-mask.open { display: flex; align-items: center; justify-content: center; }
+  #secret-panel {
+    width: min(380px, calc(100vw - 40px));
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 24px 60px rgba(0,0,0,.5);
+    position: relative;
+  }
+  #secret-panel h3 { font-size: 16px; margin-bottom: 4px; color: var(--accent2); }
+  #secret-panel .hint { font-size: 12px; color: var(--text-dim); margin-bottom: 16px; }
+  .acc-row {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 12px;
+    background: rgba(79,140,255,.08);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  .acc-row .k { color: var(--text-dim); flex: none; }
+  .acc-row .v { font-family: Consolas, monospace; word-break: break-all; text-align: right; }
+  .acc-btn {
+    width: 100%; margin-top: 6px;
+    padding: 10px; border-radius: 10px;
+    background: var(--grad); color: #fff; font-weight: 600;
+    border: none; cursor: pointer; font-size: 14px;
+  }
+  .acc-btn:hover { filter: brightness(1.1); }
+  #secret-close {
+    position: absolute; top: 10px; right: 14px;
+    background: none; border: none; color: var(--text-dim);
+    font-size: 20px; cursor: pointer; line-height: 1;
+  }
+  #secret-close:hover { color: var(--text); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo" id="logo" style="cursor:pointer; user-select:none;">FDE<span>·建站</span></div>
+    <div class="nav-links">
+      <a href="#abilities">建站能力</a>
+      <a href="#process">交付流程</a>
+      <a href="#stack">技术栈</a>
+      <a href="#contact">联系</a>
+    </div>
+  </div>
+</nav>
+
+<header>
+  <div class="wrap">
+    <div class="badge">Forward Deployed Engineer · 前置部署工程师</div>
+    <h1>把想法<span class="grad">最快落地</span>成可访问的网站</h1>
+    <p class="hero-sub">
+      我是 FDE 前置部署工程师，长期贴近业务一线：需求现场澄清、方案当场设计、站点当天上线。
+      这是我建站能力的完整展示 —— 你正在访问的页面，就是能力本身的证明。
+    </p>
+    <div class="hero-btns">
+      <a class="btn btn-primary" href="#abilities">查看建站能力</a>
+      <a class="btn btn-ghost" href="https://www.itzdw.com" target="_blank" rel="noopener">访问主站 itzdw.com</a>
+    </div>
+  </div>
+</header>
+
+<section id="abilities">
+  <div class="wrap">
+    <div class="sec-tag">ABILITIES</div>
+    <h2>六大建站核心能力</h2>
+    <p class="sec-desc">从一个想法到一个可公开访问的网站，中间所有环节我都能独立完成 —— 这正是 FDE「前置部署」的价值：离客户最近，交付最快。</p>
+    <div class="grid">
+      <div class="card">
+        <div class="icon">🎯</div>
+        <h3>需求澄清与信息架构</h3>
+        <p>现场访谈、快速抽象业务诉求，输出站点结构、页面信息架构与内容大纲，避免"做出来不是想要的"。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🎨</div>
+        <h3>页面设计与原型还原</h3>
+        <p>响应式布局、移动端适配、视觉风格定制，HTML/CSS 原型当日可看，所见即所得快速对齐预期。</p>
+      </div>
+      <div class="card">
+        <div class="icon">⚙️</div>
+        <h3>前端开发与交互实现</h3>
+        <p>语义化 HTML、现代 CSS、原生 JS / Vue / Nuxt，动画、表单、多页面路由等交互能力齐备。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🚀</div>
+        <h3>部署与域名上线</h3>
+        <p>GitHub Pages / 静态托管 / 云服务器部署全流程打通：Git 提交 → 构建发布 → 域名解析 → HTTPS 可访问。</p>
+      </div>
+      <div class="card">
+        <div class="icon">📈</div>
+        <h3>SEO 与性能优化</h3>
+        <p>语义标签、Meta 信息、TDK 优化、资源压缩与首屏优化，让站点不仅"能访问"，还"被找到、加载快"。</p>
+      </div>
+      <div class="card">
+        <div class="icon">🔄</div>
+        <h3>持续迭代与运维</h3>
+        <p>上线不是终点：内容更新、功能迭代、问题响应，版本化管理让每一次修改都可控可回滚。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="wrap">
+    <div class="sec-tag">PROCESS</div>
+    <h2>从想法到上线，只要五步</h2>
+    <p class="sec-desc">FDE 的交付节奏：不是等需求文档齐备才开始，而是边沟通边产出，最快当天交付可访问版本。</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div>
+          <h3>沟通需求 · 明确目标</h3>
+          <p>确认站点用途、目标访客与核心信息，半小时内对齐"这个站到底要解决什么问题"。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div>
+          <h3>结构设计 · 内容规划</h3>
+          <p>输出栏目结构与页面大纲（Hero / 能力 / 流程 / 案例 / 联系方式），内容先行，视觉随后。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div>
+          <h3>视觉与开发 · 当日可见</h3>
+          <p>响应式页面开发与视觉落地，提供可预览的本地版本，随时反馈随时调整。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div>
+          <h3>部署上线 · 公网可访问</h3>
+          <p>推送代码至 GitHub 仓库，Pages 自动构建发布，绑定域名（如 itzdw.github.io / itzdw.com）即刻生效。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">05</div>
+        <div>
+          <h3>迭代维护 · 长期陪伴</h3>
+          <p>根据访问反馈持续优化内容与体验，需求变更走版本管理，随时更新随时发布。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="stack">
+  <div class="wrap">
+    <div class="sec-tag">TECH STACK</div>
+    <h2>常用技术栈</h2>
+    <p class="sec-desc">按场景选型：静态展示站追求轻快，业务系统追求工程化，全部在能力射程之内。</p>
+    <div class="chips">
+      <span class="chip">HTML5 / CSS3</span>
+      <span class="chip">JavaScript (ES6+)</span>
+      <span class="chip">Vue.js</span>
+      <span class="chip">Nuxt.js</span>
+      <span class="chip">响应式布局</span>
+      <span class="chip">Git / GitHub</span>
+      <span class="chip">GitHub Pages</span>
+      <span class="chip">Nginx 部署</span>
+      <span class="chip">SEO 优化</span>
+      <span class="chip">性能优化</span>
+      <span class="chip">Node.js</span>
+      <span class="chip">AI 辅助开发</span>
+    </div>
+    <div class="quote">
+      <b>FDE 的建站哲学：</b>工具是手段，落地是目的。前置部署工程师不做"远程等需求的开发"，
+      而是带着键盘走到业务现场 —— 今天聊清楚，明天看得见，后天全公司都能访问。
+      你现在看到的这个页面，正是这个理念的现场演示。
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="sec-tag">CONTACT</div>
+    <h2>需要建站？随时找我</h2>
+    <p class="sec-desc">个人主页、产品官网、活动页、内部工具 —— 把需求发给我，最快当天上线。</p>
+    <div class="hero-btns" style="justify-content:flex-start;">
+      <a class="btn btn-primary" href="https://www.itzdw.com" target="_blank" rel="noopener">主站 itzdw.com</a>
+      <a class="btn btn-ghost" href="https://github.com/itzdw" target="_blank" rel="noopener">GitHub @itzdw</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="links">
+      <a href="https://www.itzdw.com" target="_blank" rel="noopener">www.itzdw.com</a>
+      <a href="https://github.com/itzdw" target="_blank" rel="noopener">GitHub</a>
+      <a href="#abilities">建站能力</a>
+      <a href="#process">交付流程</a>
+    </div>
+    <div>© 2026 ITZDW · FDE 前置部署工程师 · Powered by GitHub Pages</div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     隐藏演示账号面板（连续点击 Logo 10 次显示）
+     ⚠️ 修改账号信息请只改下面 data 账号/密码行的 .v 内容
+     ============================================================ -->
+<div id="secret-mask">
+  <div id="secret-panel">
+    <button id="secret-close" aria-label="关闭">×</button>
+    <h3>🔐 演示账号</h3>
+    <div class="hint">仅本人可见 · 点击 Logo ×10 唤出</div>
+    <!-- 👇 在这里修改演示账号信息 -->
+    <div class="acc-row"><span class="k">账号</span><span class="v">demo@itzdw.com</span></div>
+    <div class="acc-row"><span class="k">密码</span><span class="v">ChangeMe_2026</span></div>
+    <div class="acc-row"><span class="k">备注</span><span class="v">演示环境 · 请勿用于生产</span></div>
+    <button class="acc-btn" id="acc-copy">复制账号密码</button>
+  </div>
+</div>
+
+<script>
+(function () {
+  var logo = document.getElementById('logo');
+  var mask = document.getElementById('secret-mask');
+  var NEEDED = 10;          // 需要连续点击的次数
+  var TIMEOUT = 1500;       // 两次点击之间的最大间隔（毫秒）
+  var count = 0, timer = null;
+
+  function reset() { count = 0; if (timer) { clearTimeout(timer); timer = null; } }
+
+  logo.addEventListener('click', function () {
+    if (mask.classList.contains('open')) { mask.classList.remove('open'); reset(); return; }
+    count++;
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(reset, TIMEOUT);
+    if (count >= NEEDED) {
+      mask.classList.add('open');
+      reset();
+    }
+  });
+
+  document.getElementById('secret-close').addEventListener('click', function () {
+    mask.classList.remove('open');
+  });
+  mask.addEventListener('click', function (e) {
+    if (e.target === mask) mask.classList.remove('open');
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') mask.classList.remove('open');
+  });
+
+  document.getElementById('acc-copy').addEventListener('click', function (e) {
+    var rows = document.querySelectorAll('#secret-panel .acc-row .v');
+    var text = '账号: ' + rows[0].textContent + '\n密码: ' + rows[1].textContent;
+    var btn = e.target;
+    function done() { btn.textContent = '✓ 已复制'; setTimeout(function () { btn.textContent = '复制账号密码'; }, 1500); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done);
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch (err) {}
+      document.body.removeChild(ta);
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
