@@ -315,6 +315,66 @@
     color: var(--accent); margin-right: 8px; font-family: Georgia, serif;
   }
 
+  /* ---------- Works ---------- */
+  .works { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 22px; margin-top: 48px; }
+  .work {
+    display: block;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    overflow: hidden;
+    backdrop-filter: blur(8px);
+    transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+  }
+  .work:hover { transform: translateY(-6px); border-color: rgba(79,140,255,.55); box-shadow: 0 18px 44px rgba(0,0,0,.4); }
+  .shot {
+    height: 190px; position: relative; overflow: hidden;
+    display: flex; align-items: flex-end; justify-content: center;
+    padding: 0 26px;
+  }
+  .shot::before {
+    content: ""; position: absolute; inset: 0;
+    background:
+      radial-gradient(220px 120px at 70% 20%, rgba(255,255,255,.14), transparent),
+      radial-gradient(180px 110px at 20% 70%, rgba(255,255,255,.1), transparent);
+  }
+  .shot-1 { background: linear-gradient(140deg, #0f2744, #1e3a8a 60%, #4f46e5); }
+  .shot-2 { background: linear-gradient(140deg, #06202b, #0e7490 55%, #155e75); }
+  .shot-3 { background: linear-gradient(140deg, #2a1245, #7c3aed 55%, #db2777); }
+  .mini-browser {
+    position: relative; z-index: 1;
+    width: 100%; margin-bottom: -6px;
+    background: rgba(10, 14, 26, .92);
+    border: 1px solid rgba(255,255,255,.14);
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    padding: 10px 14px 14px;
+    box-shadow: 0 12px 34px rgba(0,0,0,.5);
+    transition: transform .3s ease;
+  }
+  .work:hover .mini-browser { transform: translateY(-10px); }
+  .mini-dots { display: flex; gap: 5px; margin-bottom: 10px; }
+  .mini-dots i { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.25); }
+  .mini-bar { height: 8px; border-radius: 4px; background: rgba(255,255,255,.22); margin-bottom: 7px; }
+  .mini-bar.w60 { width: 60%; }
+  .mini-bar.w85 { width: 85%; }
+  .mini-bar.w45 { width: 45%; }
+  .mini-row { display: flex; gap: 7px; margin-top: 10px; }
+  .mini-box { flex: 1; height: 34px; border-radius: 6px; background: rgba(255,255,255,.12); }
+  .mini-box.hl { background: rgba(255,255,255,.28); }
+  .work-body { padding: 22px 24px 24px; }
+  .work-body h3 { font-size: 17px; margin-bottom: 6px; }
+  .work-body p { font-size: 13.5px; color: var(--text-dim); margin-bottom: 14px; }
+  .work-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+  .work-meta span {
+    font-size: 11.5px; color: var(--accent2);
+    border: 1px solid rgba(34,211,238,.35);
+    background: rgba(34,211,238,.07);
+    padding: 3px 11px; border-radius: 999px;
+  }
+  .work-meta .cycle { color: var(--accent3); border-color: rgba(167,139,250,.4); background: rgba(167,139,250,.08); }
+  .works-note { margin-top: 26px; font-size: 13px; color: var(--text-dim); text-align: center; }
+
   /* ---------- Contact ---------- */
   .contact-box {
     margin-top: 44px;
@@ -404,6 +464,7 @@
       <a href="#abilities">建站能力</a>
       <a href="#process">交付流程</a>
       <a href="#stack">技术栈</a>
+      <a href="#works">作品案例</a>
       <a href="#contact">联系</a>
     </div>
   </div>
@@ -551,6 +612,63 @@
   </div>
 </section>
 
+<section id="works">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="sec-tag">PORTFOLIO</div>
+      <h2>作品案例</h2>
+      <p class="sec-desc">三个不同场景的完整演示作品（客户与数据均为虚构），点开即可体验 —— 每一个都对应一种真实建站需求。</p>
+    </div>
+    <div class="works">
+      <a class="work reveal" href="works/cloudpivot-corp.html">
+        <div class="shot shot-1">
+          <div class="mini-browser">
+            <div class="mini-dots"><i></i><i></i><i></i></div>
+            <div class="mini-bar w60"></div>
+            <div class="mini-bar w85"></div>
+            <div class="mini-row"><div class="mini-box hl"></div><div class="mini-box"></div><div class="mini-box"></div></div>
+          </div>
+        </div>
+        <div class="work-body">
+          <h3>云枢科技 · 企业官网</h3>
+          <p>品牌展示型官网：产品矩阵、数据背书、行业方案，克制专业，突出企业级信任感。</p>
+          <div class="work-meta"><span>企业官网</span><span>响应式</span><span class="cycle">交付周期 1 天</span></div>
+        </div>
+      </a>
+      <a class="work reveal" href="works/smart-factory-dashboard.html">
+        <div class="shot shot-2">
+          <div class="mini-browser">
+            <div class="mini-dots"><i></i><i></i><i></i></div>
+            <div class="mini-bar w45"></div>
+            <div class="mini-row"><div class="mini-box hl"></div><div class="mini-box"></div></div>
+            <div class="mini-row"><div class="mini-box"></div><div class="mini-box hl"></div></div>
+          </div>
+        </div>
+        <div class="work-body">
+          <h3>智造云 · 生产运营监控大屏</h3>
+          <p>车间数据大屏：KPI 置顶、产量走势、设备状态与告警分级，支持 7×24 轮播。</p>
+          <div class="work-meta"><span>数据大屏</span><span>实时时钟</span><span class="cycle">交付周期 2 天</span></div>
+        </div>
+      </a>
+      <a class="work reveal" href="works/starvoyage-event.html">
+        <div class="shot shot-3">
+          <div class="mini-browser">
+            <div class="mini-dots"><i></i><i></i><i></i></div>
+            <div class="mini-bar w60"></div>
+            <div class="mini-row"><div class="mini-box hl"></div><div class="mini-box"></div><div class="mini-box hl"></div></div>
+          </div>
+        </div>
+        <div class="work-body">
+          <h3>星航 AI · 产品发布会落地页</h3>
+          <p>活动落地页：星空背景、直播倒计时、议程卡片与报名转化，转化路径最短。</p>
+          <div class="work-meta"><span>活动页</span><span>倒计时</span><span class="cycle">交付周期 0.5 天</span></div>
+        </div>
+      </a>
+    </div>
+    <div class="works-note">💡 每个作品页底部附有「交付复盘」：真实项目中的需求要点、关键设计与交付周期。</div>
+  </div>
+</section>
+
 <section id="contact">
   <div class="wrap">
     <div class="reveal">
@@ -574,6 +692,7 @@
       <a href="https://www.itzdw.com" target="_blank" rel="noopener">www.itzdw.com</a>
       <a href="https://github.com/itzdw" target="_blank" rel="noopener">GitHub</a>
       <a href="#abilities">建站能力</a>
+      <a href="#works">作品案例</a>
       <a href="#process">交付流程</a>
     </div>
     <div>© 2026 ITZDW · FDE 前置部署工程师 · Powered by GitHub Pages</div>

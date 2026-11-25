@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>作品二 · 智造运营数据大屏 | FDE 建站能力展示</title>
+<style>
+  :root { --bg:#04070f; --panel:rgba(13,26,48,.72); --border:rgba(56,189,248,.25); --text:#dcecff; --dim:#6f8db8; --a:#22d3ee; --b:#38bdf8; --warn:#f59e0b; --ok:#34d399; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  .back{position:fixed;top:18px;left:18px;z-index:9;padding:8px 16px;border-radius:10px;background:rgba(13,26,48,.85);border:1px solid var(--border);font-size:13px;color:var(--dim);backdrop-filter:blur(8px)}
+  .back:hover{color:var(--text);border-color:var(--a)}
+  header{padding:90px 24px 30px;text-align:center;position:relative}
+  header::before{content:"";position:absolute;inset:0;background:radial-gradient(800px 260px at 50% 0%,rgba(34,211,238,.14),transparent)}
+  .tag{display:inline-block;padding:6px 16px;border-radius:999px;border:1px solid rgba(34,211,238,.45);color:var(--a);font-size:13px;background:rgba(34,211,238,.08);margin-bottom:18px}
+  h1{font-size:clamp(26px,4.4vw,42px);letter-spacing:6px;font-weight:800}
+  h1 span{color:var(--a);text-shadow:0 0 24px rgba(34,211,238,.6)}
+  .clock{margin-top:10px;color:var(--dim);font-size:13px;font-family:Consolas,monospace}
+  .dash{max-width:1280px;margin:24px auto 60px;padding:0 24px;display:grid;grid-template-columns:repeat(12,1fr);gap:16px}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:20px;backdrop-filter:blur(6px);box-shadow:inset 0 0 30px rgba(34,211,238,.04)}
+  .panel h3{font-size:14px;color:var(--a);letter-spacing:2px;margin-bottom:16px;font-weight:600}
+  .panel h3::before{content:"▎";margin-right:6px}
+  .kpis{grid-column:span 12;display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  @media (max-width:860px){.kpis{grid-template-columns:repeat(2,1fr)}.col7,.col5{grid-column:span 12}}
+  .kpi{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center}
+  .kpi b{display:block;font-size:30px;font-family:Consolas,monospace;color:var(--a);text-shadow:0 0 18px rgba(34,211,238,.5)}
+  .kpi span{font-size:12.5px;color:var(--dim)}
+  .kpi small{display:block;font-size:11px;margin-top:4px}
+  .up{color:var(--ok)} .down{color:#f87171}
+  .col7{grid-column:span 7}
+  .col5{grid-column:span 5}
+  .bars{display:flex;align-items:flex-end;gap:10px;height:180px;padding:0 6px}
+  .bar{flex:1;background:linear-gradient(180deg,var(--a),rgba(34,211,238,.15));border-radius:6px 6px 0 0;position:relative;animation:grow 1.2s ease both}
+  .bar i{position:absolute;bottom:-24px;left:0;right:0;text-align:center;font-size:11px;color:var(--dim);font-style:normal}
+  .bar b{position:absolute;top:-20px;left:0;right:0;text-align:center;font-size:11px;color:var(--text);font-family:Consolas,monospace}
+  @keyframes grow{from{height:0}}
+  .legend{margin-top:32px;display:flex;gap:18px;font-size:12px;color:var(--dim);justify-content:center}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+  table{width:100%;border-collapse:collapse;font-size:12.5px}
+  th{color:var(--a);text-align:left;padding:8px 6px;border-bottom:1px solid var(--border);font-weight:600}
+  td{padding:9px 6px;border-bottom:1px dashed rgba(56,189,248,.12);color:var(--text)}
+  td.dim{color:var(--dim)}
+  .st{padding:2px 10px;border-radius:999px;font-size:11px}
+  .st-ok{background:rgba(52,211,153,.14);color:var(--ok);border:1px solid rgba(52,211,153,.4)}
+  .st-warn{background:rgba(245,158,11,.14);color:var(--warn);border:1px solid rgba(245,158,11,.4)}
+  .note{max-width:1280px;margin:0 auto 60px;padding:0 24px}
+  .note .inner{background:var(--panel);border-left:3px solid var(--a);border-radius:6px 14px 14px 6px;padding:22px 26px;color:var(--dim);font-size:14px}
+  .note b{color:var(--text)}
+  .ring{display:flex;justify-content:center;padding:6px 0}
+  .ring svg{width:180px;height:180px}
+  .ring text{fill:var(--text);font-size:26px;font-family:Consolas,monospace}
+</style>
+</head>
+<body>
+<a class="back" href="../index.html">← 返回作品集</a>
+
+<header>
+  <div class="tag">作品二 · 数据可视化大屏 · 虚构客户演示</div>
+  <h1>智造云 · <span>生产运营监控中心</span></h1>
+  <div class="clock" id="clock">2026-11-25 14:00:00 · 车间 A 区 · 实时数据流</div>
+</header>
+
+<div class="dash">
+  <div class="kpis">
+    <div class="kpi"><b>1,847</b><span>今日产量（件）</span><small class="up">▲ 12.4% 环比</small></div>
+    <div class="kpi"><b>96.8%</b><span>设备综合效率 OEE</span><small class="up">▲ 1.2%</small></div>
+    <div class="kpi"><b>0.42%</b><span>产品不良率</span><small class="up">▼ 0.08%</small></div>
+    <div class="kpi"><b>3 / 128</b><span>异常设备 / 在线总数</span><small class="down">⚠ 需关注</small></div>
+  </div>
+
+  <div class="panel col7">
+    <h3>近 12 小时产量走势</h3>
+    <div class="bars" id="bars"></div>
+    <div class="legend"><span><i style="background:#22d3ee"></i>实际产量</span><span><i style="background:rgba(34,211,238,.3)"></i>计划产量</span></div>
+  </div>
+
+  <div class="panel col5">
+    <h3>能耗与目标达成</h3>
+    <div class="ring">
+      <svg viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="48" fill="none" stroke="rgba(56,189,248,.15)" stroke-width="10"/>
+        <circle cx="60" cy="60" r="48" fill="none" stroke="#22d3ee" stroke-width="10"
+                stroke-dasharray="301" stroke-dashoffset="52" stroke-linecap="round"
+                transform="rotate(-90 60 60)"/>
+        <text x="60" y="66" text-anchor="middle">83%</text>
+      </svg>
+    </div>
+    <p style="text-align:center;font-size:13px;color:var(--dim)">月度能耗目标达成率 · 同比优化 6.2%</p>
+  </div>
+
+  <div class="panel col5">
+    <h3>产线实时状态</h3>
+    <table>
+      <tr><th>产线</th><th class="dim">当前订单</th><th>状态</th></tr>
+      <tr><td>L1 · SMT 贴片</td><td class="dim">ORD-20261125-01</td><td><span class="st st-ok">运行中</span></td></tr>
+      <tr><td>L2 · 组装</td><td class="dim">ORD-20261125-01</td><td><span class="st st-ok">运行中</span></td></tr>
+      <tr><td>L3 · 老化测试</td><td class="dim">ORD-20261124-08</td><td><span class="st st-warn">温度偏高</span></td></tr>
+      <tr><td>L4 · 包装</td><td class="dim">ORD-20261125-02</td><td><span class="st st-ok">运行中</span></td></tr>
+    </table>
+  </div>
+
+  <div class="panel col7">
+    <h3>近期告警事件</h3>
+    <table>
+      <tr><th>时间</th><th class="dim">内容</th><th>级别</th></tr>
+      <tr><td>13:47</td><td class="dim">L3 老化炉温度超过阈值 2.1℃（已自动降速）</td><td><span class="st st-warn">提示</span></td></tr>
+      <tr><td>11:20</td><td class="dim">L2 机械臂 #7 完成预防性保养，恢复生产</td><td><span class="st st-ok">已恢复</span></td></tr>
+      <tr><td>09:05</td><td class="dim">AGV 调度批次优化，物料等待时间下降 18%</td><td><span class="st st-ok">信息</span></td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="note">
+  <div class="inner">
+    <b>交付复盘：</b>本页为 FDE 建站能力演示作品（数据为虚构模拟）。数据大屏类项目的核心是「信息密度与视觉层级」：关键指标大字号置顶、走势与异常分区呈现、告警实时滚动。真实交付通常 <b>2 个工作日</b>完成静态大屏（数据源对接视甲方接口而定）。本页还内置了实时时钟联动，可在车间大屏 7×24 小时轮播展示。
+  </div>
+</div>
+
+<script>
+  // 产量柱状图
+  var bars = document.getElementById('bars');
+  var data = [128,142,150,138,161,175,168,182,190,176,198,205];
+  var html = '';
+  data.forEach(function (v, i) {
+    var h = (v / 210) * 100;
+    html += '<div class="bar" style="height:' + h + '%;animation-delay:' + (i * 0.06) + 's"><b>' + v + '</b><i>' + ((i + 2) % 12 + 1) + '时</i></div>';
+  });
+  bars.innerHTML = html;
+  // 实时时钟
+  var clock = document.getElementById('clock');
+  setInterval(function () {
+    var d = new Date();
+    var p = function (n) { return n < 10 ? '0' + n : n; };
+    clock.textContent = d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' +
+      p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds()) + ' · 车间 A 区 · 实时数据流';
+  }, 1000);
+</script>
+</body>
+</html>

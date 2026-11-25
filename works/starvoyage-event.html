@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>作品三 · 星航 AI 产品发布会落地页 | FDE 建站能力展示</title>
+<style>
+  :root { --bg:#0b0618; --card:rgba(28,18,54,.7); --border:rgba(167,139,250,.25); --text:#f1eaff; --dim:#a89ec4; --a:#a78bfa; --b:#f472b6; --c:#22d3ee; --grad:linear-gradient(120deg,#a78bfa,#f472b6); }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.8;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  .back{position:fixed;top:18px;left:18px;z-index:9;padding:8px 16px;border-radius:10px;background:rgba(28,18,54,.85);border:1px solid var(--border);font-size:13px;color:var(--dim);backdrop-filter:blur(8px)}
+  .back:hover{color:var(--text);border-color:var(--a)}
+  .stars{position:fixed;inset:0;z-index:-1;pointer-events:none}
+  .stars i{position:absolute;width:2px;height:2px;border-radius:50%;background:#fff;opacity:.5;animation:tw 3s ease-in-out infinite}
+  @keyframes tw{50%{opacity:.08}}
+  header{padding:110px 24px 60px;text-align:center;position:relative}
+  header::before{content:"";position:absolute;inset:0;background:radial-gradient(700px 320px at 50% 0%,rgba(167,139,250,.2),transparent),radial-gradient(500px 260px at 80% 60%,rgba(244,114,182,.12),transparent)}
+  .tag{display:inline-block;padding:6px 18px;border-radius:999px;border:1px solid rgba(244,182,182,.4);color:var(--b);font-size:13px;background:rgba(244,114,182,.08);margin-bottom:24px}
+  h1{font-size:clamp(32px,5.6vw,56px);line-height:1.3;font-weight:900;letter-spacing:2px}
+  h1 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--dim);max-width:620px;margin:18px auto 0;font-size:16px}
+  .count{display:flex;gap:14px;justify-content:center;margin-top:36px;flex-wrap:wrap}
+  .cd{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 0;width:92px;backdrop-filter:blur(8px)}
+  .cd b{display:block;font-size:30px;font-family:Consolas,monospace;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .cd span{font-size:12px;color:var(--dim)}
+  .hero-btns{margin-top:34px}
+  .btn{display:inline-block;padding:14px 42px;border-radius:999px;font-size:15.5px;font-weight:700;background:var(--grad);color:#fff;box-shadow:0 10px 34px rgba(167,139,250,.4);transition:transform .18s}
+  .btn:hover{transform:translateY(-3px) scale(1.02)}
+  section{max-width:1080px;margin:0 auto;padding:60px 24px;border-top:1px solid var(--border)}
+  h2{font-size:26px;text-align:center;margin-bottom:36px}
+  .agenda{display:grid;gap:14px}
+  .item{display:flex;gap:20px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 24px;backdrop-filter:blur(8px);transition:transform .2s,border-color .2s}
+  .item:hover{transform:translateX(6px);border-color:var(--a)}
+  .time{flex:none;font-family:Consolas,monospace;color:var(--c);font-size:15px;padding-top:2px}
+  .item h3{font-size:16px}
+  .item p{font-size:13.5px;color:var(--dim)}
+  .speaker{display:inline-block;margin-top:6px;font-size:12px;color:var(--a)}
+  .form-box{max-width:520px;margin:0 auto;background:var(--card);border:1px solid var(--border);border-radius:18px;padding:32px;backdrop-filter:blur(8px)}
+  .form-box label{display:block;font-size:13px;color:var(--dim);margin:16px 0 6px}
+  .form-box input{width:100%;padding:12px 16px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text);font-size:14px;outline:none}
+  .form-box input:focus{border-color:var(--a)}
+  .form-box .btn{width:100%;margin-top:24px;text-align:center;border:none;cursor:pointer;font-family:inherit}
+  .ok{display:none;margin-top:16px;text-align:center;color:#34d399;font-size:14px}
+  .note{margin-top:44px;background:var(--card);border-left:3px solid var(--b);border-radius:6px 14px 14px 6px;padding:22px 26px;color:var(--dim);font-size:14px}
+  .note b{color:var(--text)}
+  footer{padding:44px 24px;text-align:center;color:var(--dim);font-size:13px}
+</style>
+</head>
+<body>
+<div class="stars" id="stars"></div>
+<a class="back" href="../index.html">← 返回作品集</a>
+
+<header>
+  <div class="tag">作品三 · 活动落地页 · 虚构客户演示</div>
+  <h1>星航 AI <span class="g">产品发布会</span><br>2026 · 冬季站</h1>
+  <p class="sub">12 月 28 日 · 线上直播 · 一个下午，看见下一代智能体工作方式。席位有限，报名从速。</p>
+  <div class="count" id="countdown">
+    <div class="cd"><b id="d">--</b><span>天</span></div>
+    <div class="cd"><b id="h">--</b><span>时</span></div>
+    <div class="cd"><b id="m">--</b><span>分</span></div>
+    <div class="cd"><b id="s">--</b><span>秒</span></div>
+  </div>
+  <div class="hero-btns"><a class="btn" href="#register">立即预约席位</a></div>
+</header>
+
+<section>
+  <h2>议程安排</h2>
+  <div class="agenda">
+    <div class="item"><span class="time">14:00</span><div><h3>开场：为什么智能体的下一站是「前置」？</h3><p>从行业数据看 FDE 模式如何重塑软件交付节奏。</p><span class="speaker">主讲 · 星航 AI 创始人（虚构）</span></div></div>
+    <div class="item"><span class="time">14:40</span><div><h3>产品发布：星航 Copilot X 全新能力</h3><p>现场演示从一句需求到一个可访问站点的全自动交付链路。</p><span class="speaker">主讲 · 产品副总裁（虚构）</span></div></div>
+    <div class="item"><span class="time">15:30</span><div><h3>客户实践：某制造企业 48 小时数字化落地记</h3><p>从需求澄清到数据大屏上线，全过程时间线复盘。</p><span class="speaker">嘉宾 · 标杆客户 CIO（虚构）</span></div></div>
+    <div class="item"><span class="time">16:20</span><div><h3>圆桌：FDE 工程师的能力模型与成长路径</h3><p>三位一线 FDE 对谈：业务理解、工程能力与交付节奏。</p><span class="speaker">主持 · 技术社区负责人（虚构）</span></div></div>
+  </div>
+</section>
+
+<section id="register">
+  <h2>预约席位</h2>
+  <div class="form-box">
+    <label>姓名</label><input type="text" placeholder="您的姓名">
+    <label>邮箱</label><input type="email" placeholder="name@company.com">
+    <label>公司 / 团队</label><input type="text" placeholder="公司或团队名称（选填）">
+    <button class="btn" id="submit-btn">提交预约</button>
+    <div class="ok" id="ok">✓ 预约成功！开播前 30 分钟将发送直播链接到您的邮箱。</div>
+  </div>
+  <div class="note">
+    <b>交付复盘：</b>本页为 FDE 建站能力演示作品（活动为虚构）。活动落地页的关键是「转化路径最短」：倒计时制造紧迫感、议程建立期待、表单一屏可达。真实交付通常 <b>半个工作日</b>即可上线，并支持接入真实报名接口。页面星空背景、倒计时、表单提交反馈均为纯前端实现，无任何外部依赖。
+  </div>
+</section>
+
+<footer>© 2026 星航 AI（虚构演示） · 由 FDE 前置部署工程师制作</footer>
+
+<script>
+  // 星空
+  var stars = document.getElementById('stars');
+  var html = '';
+  for (var i = 0; i < 60; i++) {
+    html += '<i style="left:' + (Math.random() * 100) + '%;top:' + (Math.random() * 100) + '%;animation-delay:' + (Math.random() * 3) + 's"></i>';
+  }
+  stars.innerHTML = html;
+  // 倒计时（目标 2026-12-28 14:00）
+  var target = new Date('2026-12-28T14:00:00+08:00').getTime();
+  function tick() {
+    var diff = target - Date.now();
+    if (diff < 0) diff = 0;
+    var p = function (n) { return n < 10 ? '0' + n : n; };
+    document.getElementById('d').textContent = p(Math.floor(diff / 864e5));
+    document.getElementById('h').textContent = p(Math.floor(diff / 36e5) % 24);
+    document.getElementById('m').textContent = p(Math.floor(diff / 6e4) % 60);
+    document.getElementById('s').textContent = p(Math.floor(diff / 1e3) % 60);
+  }
+  setInterval(tick, 1000); tick();
+  // 表单提交反馈
+  document.getElementById('submit-btn').addEventListener('click', function () {
+    document.getElementById('ok').style.display = 'block';
+    this.textContent = '已提交 ✓';
+  });
+</script>
+</body>
+</html>

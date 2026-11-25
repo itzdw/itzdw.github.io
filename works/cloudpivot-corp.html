@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>作品一 · 云枢科技企业官网 | FDE 建站能力展示</title>
+<style>
+  :root { --bg:#0a0f1c; --card:#121a2e; --border:rgba(102,137,191,.2); --text:#e9eef8; --dim:#93a3bd; --a:#38bdf8; --b:#6366f1; --grad:linear-gradient(120deg,#38bdf8,#6366f1); }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.8}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  .back{position:fixed;top:18px;left:18px;z-index:9;padding:8px 16px;border-radius:10px;background:rgba(18,26,46,.85);border:1px solid var(--border);font-size:13px;color:var(--dim);backdrop-filter:blur(8px)}
+  .back:hover{color:var(--text);border-color:var(--a)}
+  header{padding:110px 0 80px;position:relative;overflow:hidden}
+  header::before{content:"";position:absolute;inset:0;background:radial-gradient(700px 340px at 70% 10%,rgba(56,189,248,.16),transparent),radial-gradient(500px 300px at 20% 80%,rgba(99,102,241,.14),transparent)}
+  .tag{display:inline-block;padding:6px 16px;border-radius:999px;border:1px solid rgba(56,189,248,.4);color:var(--a);font-size:13px;background:rgba(56,189,248,.08);margin-bottom:22px}
+  h1{font-size:clamp(30px,5vw,50px);line-height:1.25;font-weight:800}
+  h1 .g{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--dim);max-width:600px;margin-top:18px;font-size:16px}
+  .hero-btns{margin-top:32px;display:flex;gap:14px;flex-wrap:wrap}
+  .btn{padding:12px 28px;border-radius:10px;font-size:14.5px;font-weight:600}
+  .btn-p{background:var(--grad);color:#fff}
+  .btn-g{border:1px solid var(--border);color:var(--dim)}
+  .btn-g:hover{color:var(--text);border-color:var(--a)}
+  section{padding:70px 0;border-top:1px solid var(--border)}
+  h2{font-size:26px;margin-bottom:30px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;transition:transform .2s,border-color .2s}
+  .card:hover{transform:translateY(-4px);border-color:var(--a)}
+  .card h3{font-size:16.5px;margin:10px 0 6px}
+  .card p{font-size:13.5px;color:var(--dim)}
+  .card .ico{font-size:26px}
+  .nums{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:center}
+  .nums b{display:block;font-size:32px;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .nums span{font-size:13px;color:var(--dim)}
+  .note{margin-top:44px;background:var(--card);border-left:3px solid var(--b);border-radius:6px 14px 14px 6px;padding:22px 26px;color:var(--dim);font-size:14px}
+  .note b{color:var(--text)}
+  footer{padding:40px 0;text-align:center;color:var(--dim);font-size:13px}
+</style>
+</head>
+<body>
+<a class="back" href="../index.html">← 返回作品集</a>
+
+<header>
+  <div class="wrap">
+    <div class="tag">作品一 · 企业官网 · 虚构客户演示</div>
+    <h1>云枢科技 <span class="g">CloudPivot</span><br>一站式企业官网</h1>
+    <p class="sub">为一家虚构的 SaaS 科技公司打造的品牌官网：产品矩阵、行业方案、客户证言、数据背书一应俱全，风格克制专业，突出企业级信任感。</p>
+    <div class="hero-btns">
+      <a class="btn btn-p" href="#products">浏览产品矩阵</a>
+      <a class="btn btn-g" href="../index.html">了解建站能力</a>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>产品矩阵</h2>
+    <div class="grid">
+      <div class="card"><div class="ico">☁️</div><h3>云枢 CRM</h3><p>全渠道客户数据整合，线索自动分配，让销售团队专注高价值跟进。</p></div>
+      <div class="card"><div class="ico">📊</div><h3>云枢 BI</h3><p>自助式数据分析平台，拖拽出图，实时看板驱动业务决策。</p></div>
+      <div class="card"><div class="ico">🤖</div><h3>云枢 AI 工单</h3><p>智能客服与工单联动，首响时间缩短 60%，客户满意度持续提升。</p></div>
+      <div class="card"><div class="ico">🔐</div><h3>云枢安全网关</h3><p>零信任架构接入，审计日志全留存，满足金融级合规要求。</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>数据背书</h2>
+    <div class="nums">
+      <div><b>1,200+</b><span>企业客户</span></div>
+      <div><b>99.99%</b><span>服务可用性</span></div>
+      <div><b>40ms</b><span>平均响应</span></div>
+      <div><b>24/7</b><span>专属支持</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="note">
+      <b>交付复盘：</b>本页为 FDE 建站能力演示作品（客户为虚构）。真实交付中，此类企业官网从需求沟通到公网上线的标准周期为 <b>1 个工作日</b>：上午对齐栏目与内容，下午完成响应式开发与部署，当晚即可将链接发给客户验收。
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 云枢科技（虚构演示） · 由 FDE 前置部署工程师制作</footer>
+</body>
+</html>
