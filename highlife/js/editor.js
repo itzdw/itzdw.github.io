@@ -34,8 +34,8 @@
   var LIST_DEFS = {
     banners:  { label: '轮播图',   add: { img: IMG_OPTIONS[0], title: '新轮播', sub: '' },
                 fields: [{ k: 'img', type: 'img', l: '图片' }, { k: 'title', type: 'text', l: '标题' }, { k: 'sub', type: 'text', l: '副标题' }] },
-    courses:  { label: '课程',     add: { id: 0, name: '新课程', price: '￥0', img: IMG_OPTIONS[2] },
-                fields: [{ k: 'name', type: 'text', l: '课程名称' }, { k: 'price', type: 'text', l: '价格' }, { k: 'img', type: 'img', l: '课程图片' }] },
+    courses:  { label: '课程',     add: { id: 0, name: '新课程', price: '￥0', img: IMG_OPTIONS[2], desc: '', detail: '', imgs: [] },
+                fields: [{ k: 'name', type: 'text', l: '课程名称' }, { k: 'price', type: 'text', l: '价格' }, { k: 'img', type: 'img', l: '课程图片' }, { k: 'desc', type: 'text', l: '副标题（详情页展示）' }, { k: 'detail', type: 'textarea', l: '详情介绍（详情页展示，空行分段）' }] },
     partners: { label: '合作伙伴', add: { img: IMG_OPTIONS[10], name: '新伙伴' },
                 fields: [{ k: 'name', type: 'text', l: '名称' }, { k: 'img', type: 'img', l: 'Logo图片' }] },
     whyItems: { label: '优势条目', add: { img: IMG_OPTIONS[19], title: '新优势', desc: '优势描述' },
@@ -556,7 +556,9 @@
       L.push('    ],');
       L.push('    coursesTitle: ' + esc(s.coursesTitle) + ',');
       L.push('    courses: [');
-      (s.courses || []).forEach(function (c) { L.push('      { id: ' + Number(c.id) + ', name: ' + esc(c.name) + ', price: ' + esc(c.price) + ', img: ' + esc(c.img) + ' },'); });
+      (s.courses || []).forEach(function (c) {
+        L.push('      { id: ' + Number(c.id) + ', name: ' + esc(c.name) + ', price: ' + esc(c.price) + ', img: ' + esc(c.img) + ', desc: ' + esc(c.desc) + ', detail: ' + esc(c.detail) + ', imgs: ' + JSON.stringify(Array.isArray(c.imgs) ? c.imgs : []) + ' },');
+      });
       L.push('    ],');
       var c = s.contact || {};
       L.push('    contact: { intro: ' + esc(c.intro) + ', email: ' + esc(c.email) + ', tel: ' + esc(c.tel) + ', addr: ' + esc(c.addr) + ', brand: ' + esc(c.brand) + ', formLabel: ' + esc(c.formLabel) + ' },');
