@@ -226,10 +226,12 @@
             <el-table :data="site.courses" size="small" border>
               <el-table-column label="封面" width="70"><template #default="s"><img class="thumb" :src="s.row.img"></template></el-table-column>
               <el-table-column label="课程名称" show-overflow-tooltip><template #default="s"><el-input v-model="s.row.name" @input="mark" size="small"></el-input></template></el-table-column>
-              <el-table-column label="价格" width="120"><template #default="s"><el-input v-model="s.row.price" @input="mark" size="small"></el-input></template></el-table-column>
-              <el-table-column label="封面图" width="130"><template #default="s"><el-button size="small" @click="pickUpload(s.row,'img')">⬆ 上传图片</el-button></template></el-table-column>
+              <el-table-column label="价格" width="110"><template #default="s"><el-input v-model="s.row.price" @input="mark" size="small"></el-input></template></el-table-column>
+              <el-table-column label="封面图" width="120"><template #default="s"><el-button size="small" @click="pickUpload(s.row,'img')">⬆ 上传</el-button></template></el-table-column>
+              <el-table-column label="详情页" width="90"><template #default="s"><el-button size="small" type="primary" plain @click="openCourseDetail(s.row)">✏️ 详情</el-button></template></el-table-column>
               <el-table-column label="操作" width="70"><template #default="s"><el-button size="small" type="danger" @click="site.courses.splice(s.$index,1);mark()">删</el-button></template></el-table-column>
             </el-table>
+            <div class="hint">点每行的「✏️ 详情」编辑课程详情页内容（副标题 / 详情介绍 / 图集），前台课程卡片点击即进入详情页 course.html?id=课程ID。</div>
           </div>
         </template>
 
@@ -327,6 +329,35 @@
       <el-button type="primary" @click="saveAccount">创建</el-button>
     </template>
   </el-dialog>
+
+  <!-- 课程详情编辑弹窗 -->
+  <el-dialog v-model="courseDialog" title="编辑课程详情页" width="640px">
+    <template v-if="courseEdit">
+      <el-form label-width="90px">
+        <el-form-item label="课程名称"><el-input v-model="courseEdit.name" @input="mark"></el-input></el-form-item>
+        <el-form-item label="副标题">
+          <el-input v-model="courseEdit.desc" @input="mark" placeholder="详情页名称下方的一句话简介（可留空）"></el-input>
+        </el-form-item>
+        <el-form-item label="详情介绍">
+          <el-input v-model="courseEdit.detail" type="textarea" :rows="8" @input="mark" placeholder="支持多段文字，空行自动分段；展示在详情页「课程详情」区块（可留空）"></el-input>
+        </el-form-item>
+        <el-form-item label="详情图集">
+          <div style="width:100%">
+            <div v-for="(u,i) in courseEdit.imgs" :key="i" style="display:flex;gap:10px;align-items:center;margin-bottom:8px">
+              <img :src="u" class="thumb">
+              <el-button size="small" @click="pickCourseImg(i)">⬆ 替换</el-button>
+              <el-button size="small" type="danger" @click="courseEdit.imgs.splice(i,1);mark()">删除</el-button>
+            </div>
+            <el-button size="small" type="primary" plain @click="pickCourseImg(-1)">⬆ 上传图片</el-button>
+            <div class="hint">图集按顺序展示在详情页「课程图集」区块（可留空）。</div>
+          </div>
+        </el-form-item>
+      </el-form>
+    </template>
+    <template #footer>
+      <el-button @click="courseDialog=false">关闭</el-button>
+    </template>
+  </el-dialog>
 </div>
 
 <script src="vendor/vue.global.prod.js"></script>
@@ -389,7 +420,29 @@ createApp({
     }
     function switchSite(sid){ if(sites[sid]){ currentSite.value=sid; menu.value='basic'; ElementPlus.ElMessage.success('已切换到 '+sid); } }
     function addBanner(){ site.value.banners.push({img:imgOptions[0].v,title:'',sub:''}); mark(); }
-    function addCourse(){ site.value.courses.push({id:Date.now(),name:'',price:'',img:imgOptions[0].v}); mark(); }
+    function addCourse(){ site.value.courses.push({id:Date.now(),name:'',price:'',img:imgOptions[0].v,desc:'',detail:'',imgs:[]}); mark(); }
+
+    // ---------- 课程详情页编辑 ----------
+    const courseDialog = ref(false);
+    const courseEdit = ref(null);
+    function openCourseDetail(c){
+      if(!Array.isArray(c.imgs)) c.imgs = [];
+      courseEdit.value = c;
+      courseDialog.value = true;
+    }
+    function pickCourseImg(i){
+      const inp=document.createElement('input'); inp.type='file'; inp.accept='image/*';
+      inp.onchange=async()=>{
+        const f=inp.files&&inp.files[0]; if(!f) return;
+        if(!/^image\//.test(f.type)){ ElementPlus.ElMessage.warning('请选择图片文件'); return; }
+        const url=await uploadImageFile(f); if(!url) return;
+        imgOptions.unshift({v:url, l:'⬆ '+f.name.slice(0,16)});
+        if(i>=0) courseEdit.value.imgs[i]=url; else courseEdit.value.imgs.push(url);
+        mark();
+        ElementPlus.ElMessage.success('上传成功，约 1 分钟后前台生效（Pages 构建）');
+      };
+      inp.click();
+    }
 
     // ---------- 图片上传（GitHub Contents API，需在「自动同步设置」配置令牌） ----------
     function fileToB64(file){ return new Promise(res=>{ const fr=new FileReader(); fr.onload=()=>res(String(fr.result).split(',')[1]); fr.onerror=()=>res(''); fr.readAsDataURL(file); }); }
@@ -489,7 +542,7 @@ createApp({
         L.push('    ],');
         L.push('    coursesTitle: '+esc(s.coursesTitle)+',');
         L.push('    courses: [');
-        (s.courses||[]).forEach(c=> L.push('      { id: '+Number(c.id)+', name: '+esc(c.name)+', price: '+esc(c.price)+', img: '+esc(c.img)+' },'));
+        (s.courses||[]).forEach(c=> L.push('      { id: '+Number(c.id)+', name: '+esc(c.name)+', price: '+esc(c.price)+', img: '+esc(c.img)+', desc: '+esc(c.desc)+', detail: '+esc(c.detail)+', imgs: '+JSON.stringify(Array.isArray(c.imgs)?c.imgs:[])+' },'));
         L.push('    ],');
         const c = s.contact||{};
         L.push('    contact: { intro: '+esc(c.intro)+', email: '+esc(c.email)+', tel: '+esc(c.tel)+', addr: '+esc(c.addr)+', brand: '+esc(c.brand)+', formLabel: '+esc(c.formLabel)+' },');
@@ -636,7 +689,7 @@ createApp({
       }
       setInterval(tick, 10000); // 每10秒自动保存 + 条件同步
     });
-    return { logged,account,login,sites,accounts,currentSite,menu,dirty,code,accountDialog,newAccount,isSuper,site,imgOptions,draftTime,syncEnabled,syncToken,syncRepo,syncBranch,syncPath,syncMsg,syncOk,mark,doLogin,logout,onMenu,switchSite,addBanner,addCourse,pickUpload,openAccount,saveAccount,delAccount,generate,copyCode,download,saveSyncSettings,onSyncToggle,syncNow };
+    return { logged,account,login,sites,accounts,currentSite,menu,dirty,code,accountDialog,newAccount,courseDialog,courseEdit,isSuper,site,imgOptions,draftTime,syncEnabled,syncToken,syncRepo,syncBranch,syncPath,syncMsg,syncOk,mark,doLogin,logout,onMenu,switchSite,addBanner,addCourse,pickUpload,openCourseDetail,pickCourseImg,openAccount,saveAccount,delAccount,generate,copyCode,download,saveSyncSettings,onSyncToggle,syncNow };
   }
 }).use(ElementPlus).mount('#app');
 </script>
