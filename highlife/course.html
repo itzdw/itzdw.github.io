@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>课程详情</title>
+<link rel="stylesheet" href="css/site.css">
+<style>
+  /* 详情页专属样式（移动端基准） */
+  .crumb{padding:12px;background:#fff;font-size:13px;color:#666}
+  .crumb a{color:#469bb7}
+  .d-head{background:#fff;padding:0 12px 14px}
+  .d-head .d-cover{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;background:#f3f3f3}
+  .d-head h1{font-size:18px;font-weight:600;color:#222;margin:12px 0 6px;line-height:1.5}
+  .d-head .d-sub{font-size:13px;color:#888;margin-bottom:8px}
+  .d-head .d-price{color:#d0342c;font-size:20px;font-weight:600}
+  .d-sec{background:#fff;margin-top:10px;padding:14px 12px}
+  .d-sec h2{font-size:16px;font-weight:600;color:#222;margin-bottom:10px}
+  .d-sec .d-text p{font-size:14px;color:#444;line-height:1.8;margin-bottom:10px;white-space:pre-wrap}
+  .d-sec .d-text p.empty{color:#aaa}
+  .d-gallery img{width:100%;border-radius:8px;margin-bottom:10px}
+  .d-cta{margin:16px 12px 4px;display:flex;gap:10px}
+  .d-cta a{flex:1;text-align:center;padding:12px 0;border-radius:22px;font-size:15px;font-weight:600}
+  .d-cta .c-back{background:#fff;color:#469bb7;border:1.5px solid #469bb7;box-sizing:border-box}
+  .d-cta .c-go{background:#469bb7;color:#fff}
+  .d-more{margin-top:10px;padding-bottom:20px}
+  .d-more .course-grid{grid-template-columns:1fr 1fr;gap:12px 10px}
+  .footer{background:#1f2d3d;color:#bbb;text-align:center;font-size:12px;padding:14px 10px}
+  /* PC 端 */
+  @media (min-width:768px){
+    .crumb{padding:14px 28px;font-size:14px}
+    .d-head{padding:0 28px 20px;display:flex;gap:36px;align-items:flex-start}
+    .d-head .d-cover{width:400px;flex:0 0 400px;aspect-ratio:1/1}
+    .d-head .d-info{flex:1;padding-top:8px}
+    .d-head h1{font-size:26px;margin-top:0}
+    .d-head .d-sub{font-size:15px}
+    .d-head .d-price{font-size:26px}
+    .d-sec{padding:20px 28px}
+    .d-sec h2{font-size:20px}
+    .d-sec .d-text p{font-size:15px}
+    .d-cta{padding:0 28px;max-width:560px;margin:20px auto 4px}
+    .d-more{padding:14px 28px 30px}
+    .d-more .course-grid{grid-template-columns:repeat(4,1fr);gap:26px 22px}
+  }
+</style>
+</head>
+<body>
+<div class="wap">
+
+  <header class="topbar" id="topbar">
+    <div class="brand-logo"><a href="index.html?t=__SITE__"><img id="logoImg" src="images/img_001.jpg" alt=""></a></div>
+    <nav class="pc-nav">
+      <a href="index.html?t=__SITE__">首页</a>
+      <a href="index.html?t=__SITE__#courses">全部课程</a>
+      <a href="index.html?t=__SITE__#contact">联系我们</a>
+      <a href="admin.html">后台管理</a>
+    </nav>
+  </header>
+
+  <div class="crumb"><a href="index.html?t=__SITE__">首页</a> / <a href="index.html?t=__SITE__#courses">课程</a> / <span id="crumbName">课程详情</span></div>
+
+  <section class="d-head">
+    <img class="d-cover" id="dCover" src="images/img_003.jpg" alt="">
+    <div class="d-info">
+      <h1 id="dName">课程名称</h1>
+      <div class="d-sub" id="dSub"></div>
+      <div class="d-price" id="dPrice"></div>
+    </div>
+  </section>
+
+  <section class="d-sec" id="dDetailSec">
+    <h2>课程详情</h2>
+    <div class="d-text" id="dText"></div>
+  </section>
+
+  <section class="d-sec d-gallery" id="dGallerySec" style="display:none">
+    <h2>课程图集</h2>
+    <div id="dGallery"></div>
+  </section>
+
+  <div class="d-cta">
+    <a class="c-back" href="index.html?t=__SITE__#courses">返回课程</a>
+    <a class="c-go" href="index.html?t=__SITE__#contact">咨询报名</a>
+  </div>
+
+  <section class="mod d-more" id="dMoreSec" style="display:none">
+    <div class="mod-hd"><h2>其他课程</h2><span class="hd-line"></span></div>
+    <div class="course-grid" id="dMoreGrid"></div>
+  </section>
+
+  <footer class="footer" id="dFooter"></footer>
+</div>
+
+<nav class="tabbar">
+  <a href="index.html?t=__SITE__" class="on"><img src="images/img_042.png" alt=""><span>Home</span></a>
+  <a href="index.html?t=__SITE__#contact"><img src="images/img_043.png" alt=""><span>Tel.</span></a>
+  <a href="admin.html"><img src="images/img_044.png" alt=""><span>Sign in</span></a>
+</nav>
+
+<script src="js/site-config.js"></script>
+<script>
+(function () {
+  var DRAFT_KEY = 'hl_cms_draft_v1';
+  function readDraft() {
+    try {
+      var raw = localStorage.getItem(DRAFT_KEY);
+      if (!raw) return null;
+      var d = JSON.parse(raw);
+      return (d && d.sites) ? d : null;
+    } catch (e) { return null; }
+  }
+  var draft = readDraft();
+  var sitesMap = draft ? draft.sites : JSON.parse(JSON.stringify(window.HIGHLIFE_SITES || {}));
+  var params = new URLSearchParams(location.search);
+  var siteId = params.get('t');
+  if (!siteId || !sitesMap[siteId]) siteId = Object.keys(sitesMap)[0];
+  var S = sitesMap[siteId] || {};
+  var courses = Array.isArray(S.courses) ? S.courses : [];
+
+  // 定位课程：优先 id，其次 i（下标），都取不到默认第一门
+  var item = null;
+  var idParam = params.get('id');
+  if (idParam !== null) {
+    for (var i = 0; i < courses.length; i++) {
+      if (String(courses[i].id) === String(idParam)) { item = courses[i]; break; }
+    }
+  }
+  if (!item && params.get('i') !== null) item = courses[parseInt(params.get('i'), 10)] || null;
+  if (!item) item = courses[0] || null;
+
+  var idx = item ? courses.indexOf(item) : -1;
+  var home = 'index.html?t=' + encodeURIComponent(siteId);
+
+  // 把页面里所有 __SITE__ 占位链接替换为真实站点参数
+  Array.prototype.forEach.call(document.querySelectorAll('a[href*="__SITE__"]'), function (a) {
+    a.href = a.href.replace('__SITE__', encodeURIComponent(siteId));
+  });
+
+  document.title = (item && item.name ? item.name + ' - ' : '') + (S.name || 'highlife-culture');
+
+  function txt(id, v) { var el = document.getElementById(id); if (el) el.textContent = v == null ? '' : v; }
+  function show(id, on) { var el = document.getElementById(id); if (el) el.style.display = on ? '' : 'none'; }
+
+  if (item) {
+    txt('crumbName', item.name);
+    txt('dName', item.name);
+    txt('dPrice', item.price);
+    var cover = document.getElementById('dCover');
+    if (cover) cover.src = item.img || '';
+    // 副标题：没有则隐藏
+    var subEl = document.getElementById('dSub');
+    if (subEl) subEl.style.display = item.desc ? '' : 'none';
+    txt('dSub', item.desc);
+
+    // 详情文本：按空行/换行分段；无内容显示占位提示
+    var box = document.getElementById('dText');
+    box.innerHTML = '';
+    var paras = String(item.detail || '').split(/\n+/).map(function (s) { return s.trim(); }).filter(function (s) { return s; });
+    if (paras.length) {
+      paras.forEach(function (p) {
+        var el = document.createElement('p'); el.textContent = p; box.appendChild(el);
+      });
+    } else {
+      var el = document.createElement('p');
+      el.className = 'empty';
+      el.textContent = '详情内容即将上线，欢迎联系我们咨询本课程的详细信息与开课安排。';
+      box.appendChild(el);
+    }
+
+    // 图集
+    var imgs = Array.isArray(item.imgs) ? item.imgs.filter(function (u) { return u; }) : [];
+    if (imgs.length) {
+      show('dGallerySec', true);
+      var g = document.getElementById('dGallery');
+      imgs.forEach(function (u) {
+        var im = document.createElement('img'); im.src = u; im.loading = 'lazy'; g.appendChild(im);
+      });
+    }
+
+    // 其他课程推荐（最多 4 门，不含当前）
+    var others = courses.filter(function (c, i) { return i !== idx; }).slice(0, 4);
+    if (others.length) {
+      show('dMoreSec', true);
+      var grid = document.getElementById('dMoreGrid');
+      others.forEach(function (c) {
+        var a = document.createElement('a');
+        a.className = 'course';
+        a.href = 'course.html?t=' + encodeURIComponent(siteId) + '&id=' + encodeURIComponent(c.id != null ? c.id : courses.indexOf(c));
+        var pic = document.createElement('div'); pic.className = 'pic';
+        var im = document.createElement('img'); im.src = c.img || ''; im.loading = 'lazy';
+        pic.appendChild(im);
+        var nm = document.createElement('div'); nm.className = 'name'; nm.textContent = c.name || '';
+        var pr = document.createElement('div'); pr.className = 'price'; pr.textContent = c.price || '';
+        a.appendChild(pic); a.appendChild(nm); a.appendChild(pr);
+        grid.appendChild(a);
+      });
+    }
+  } else {
+    txt('dName', '课程不存在或已被删除');
+  }
+
+  txt('dFooter', S.footer || '');
+})();
+</script>
+</body>
+</html>
