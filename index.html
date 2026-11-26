@@ -83,6 +83,33 @@
     .matrix { display: none; }
   }
 
+  /* ---------- 底部右下角滚动到底部按钮 ---------- */
+  .scroll-bottom-btn {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 90;
+    width: 44px; height: 44px;
+    border: 1px solid rgba(34,211,238,.35);
+    border-radius: 50%;
+    background: rgba(13, 20, 36, .72);
+    backdrop-filter: blur(8px);
+    color: var(--accent2);
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    opacity: .55;
+    transition: opacity .25s ease, transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+  }
+  .scroll-bottom-btn:hover {
+    opacity: 1;
+    transform: translateY(3px);
+    border-color: rgba(34,211,238,.8);
+    box-shadow: 0 0 18px rgba(34,211,238,.35);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .scroll-bottom-btn { transition: none; }
+  }
+
   /* ---------- Nav ---------- */
   nav {
     position: sticky; top: 0; z-index: 50;
@@ -1014,6 +1041,19 @@
       try { document.execCommand('copy'); done(); } catch (err) {}
       document.body.removeChild(ta);
     }
+  });
+})();
+
+/* ---------- 底部右下角：滚动到底部按钮 ---------- */
+(function () {
+  var btn = document.createElement('button');
+  btn.className = 'scroll-bottom-btn';
+  btn.setAttribute('aria-label', '滚动到底部');
+  btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16"/><path d="M5 13l7 7 7-7"/></svg>';
+  document.body.appendChild(btn);
+
+  btn.addEventListener('click', function () {
+    window.scrollTo({ top: document.documentElement.scrollHeight, behavior: 'smooth' });
   });
 })();
 </script>
